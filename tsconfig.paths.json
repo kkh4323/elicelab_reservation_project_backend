@@ -5,6 +5,8 @@
       "@root/*": ["./src/*"],
       "@config/*": ["./src/config/*"],
       "@database/*": ["./src/database/*"],
+      "@user/*": ["./src/user/*"],
+      "@auth/*": ["./src/auth/*"],
     }
   }
 }
