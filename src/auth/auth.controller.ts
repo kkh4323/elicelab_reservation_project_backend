@@ -1,9 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service';
 import { CreateUserDto } from '@user/dto/create-user.dto';
 import { LoginUserDto } from '@user/dto/login-user.dto';
 import { User } from '@user/entities/user.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LocalAuthGuard } from '@auth/guardies/local-auth.guard';
+import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -18,7 +20,9 @@ export class AuthController {
 
   // 로그인
   @Post('/login')
-  async loginUser(@Body() loginUserDto: LoginUserDto): Promise<User> {
-    return await this.authService.loginUser(loginUserDto);
+  @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: LoginUserDto })
+  async loginUser(@Req() req: RequestWithUserInterface): Promise<User> {
+    return await this.authService.loginUser(req.user);
   }
 }
