@@ -17,6 +17,7 @@ import { LocalAuthGuard } from '@auth/guardies/local-auth.guard';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 import { JwtAuthGuard } from '@auth/guardies/jwt-auth.guard';
 import { GoogleAuthGuard } from '@auth/guardies/google-auth.guard';
+import { NaverAuthGuard } from '@auth/guardies/naver-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -67,7 +68,25 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleLoginCallback(@Req() req: RequestWithUserInterface) {
     const user = req.user;
-    const token = await this.authService.generateAccessToken(user.id);
-    return { user, token };
+    const accessToken = await this.authService.generateAccessToken(user.id);
+    return { user, accessToken };
+  }
+
+  // 네이버 로그인
+  @HttpCode(200)
+  @Get('/naver')
+  @UseGuards(NaverAuthGuard)
+  async naverLogin() {
+    return HttpStatus.OK;
+  }
+
+  // 네이버 로그인 콜백
+  @HttpCode(200)
+  @Get('/naver/callback')
+  @UseGuards(NaverAuthGuard)
+  async naverLoginCallback(@Req() req: RequestWithUserInterface) {
+    const user = req.user;
+    const accessToken = await this.authService.generateAccessToken(user.id);
+    return { user, accessToken };
   }
 }
