@@ -1,11 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service';
 import { CreateUserDto } from '@user/dto/create-user.dto';
 import { LoginUserDto } from '@user/dto/login-user.dto';
 import { User } from '@user/entities/user.entity';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from '@auth/guardies/local-auth.guard';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
+import { JwtAuthGuard } from '@auth/guardies/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -24,9 +25,21 @@ export class AuthController {
   @ApiBody({ type: LoginUserDto })
   async loginUser(
     @Req() req: RequestWithUserInterface,
-  ): Promise<{ user: User; token: string }> {
+  ): Promise<{ user: User; accessToken: string }> {
     const user: User = await req.user;
-    const token: string = await this.authService.generateAccessToken(user.id);
-    return { user, token };
+    const accessToken: string = await this.authService.generateAccessToken(
+      user.id,
+    );
+    return { user, accessToken };
+  }
+
+  // 로그인한 유저 프로필 정보 가져오기
+  @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getUserInfoByToken(
+    @Req() req: RequestWithUserInterface,
+  ): Promise<User> {
+    return req.user;
   }
 }

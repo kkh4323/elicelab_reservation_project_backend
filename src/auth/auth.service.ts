@@ -4,9 +4,9 @@ import { CreateUserDto } from '@user/dto/create-user.dto';
 import { User } from '@user/entities/user.entity';
 import { LoginUserDto } from '@user/dto/login-user.dto';
 import * as bcrypt from 'bcryptjs';
-import { TokenPayloadInterface } from '@auth/interfaces/TokenPayloadInterface';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { TokenPayloadInterface } from '@auth/interfaces/TokenPayloadInterface';
 
 @Injectable()
 export class AuthService {
@@ -43,12 +43,12 @@ export class AuthService {
   }
 
   // accessToken 생성
-  public generateAccessToken(userId: string) {
+  public generateAccessToken(userId: string): string {
     const payload: TokenPayloadInterface = { userId };
-    const token = this.jwtService.sign(payload, {
+    const accessToken: string = this.jwtService.sign(payload, {
       secret: this.configService.get('ACCESS_TOKEN_SECURITY'),
       expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'),
     });
-    return token;
+    return accessToken;
   }
 }
