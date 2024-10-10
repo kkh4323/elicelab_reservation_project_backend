@@ -1,14 +1,16 @@
-import { BeforeInsert, Column, Entity } from "typeorm";
-import { BaseEntity } from "@root/common/base.entity";
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BaseEntity } from '@root/common/base.entity';
 import * as bcrypt from 'bcryptjs';
 import * as gravatar from 'gravatar';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends BaseEntity {
-  @Column({unique: true})
+  @Column({ unique: true })
   public email: string;
 
   @Column()
+  @Exclude() // 값 return할 때 password 숨겨줌
   public password: string;
 
   @Column()
@@ -17,7 +19,7 @@ export class User extends BaseEntity {
   @Column()
   public phone: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   public profileImg?: string;
 
   @BeforeInsert()
@@ -31,6 +33,6 @@ export class User extends BaseEntity {
       r: 'pg',
       d: 'mm',
       protocol: 'https',
-    })
+    });
   }
 }
