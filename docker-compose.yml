@@ -7,3 +7,10 @@ services:
       - "5433:5432"
     env_file:
       - .env
+  redis:
+    container_name: Kangho_redis
+    image: "redis:alpine"
+    env_file:
+      - .env
+    ports:
+      - "6380:6379"
