@@ -16,6 +16,10 @@ import * as Joi from '@hapi/joi';
 
         ACCESS_TOKEN_SECURITY: Joi.string().required(),
         ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+
+        GOOGLE_AUTH_CLIENT_ID: Joi.string().required(),
+        GOOGLE_AUTH_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_AUTH_CALLBACK_URL: Joi.string().required(),
       }),
     }),
   ],
