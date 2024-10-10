@@ -10,12 +10,12 @@ export class AuthController {
   // 회원가입
   @Post('/signup')
   async registerUser(@Body() createUserDto: CreateUserDto) {
-    return;
+    return await this.authService.signinUser(createUserDto);
   }
 
   // 로그인
   @Post('/login')
   async loginUser(@Body() loginUserDto: LoginUserDto) {
-    return;
+    return await this.authService.loginUser(loginUserDto);
   }
 }
