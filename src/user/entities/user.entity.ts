@@ -25,7 +25,7 @@ export class User extends BaseEntity {
   @BeforeInsert()
   async beforeSaveFunction() {
     // password 암호화
-    const saltValue = await bcrypt.getSalt('10');
+    const saltValue = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, saltValue);
     // 기본 프로필 이미지 자동 생성
     this.profileImg = gravatar.url(this.email, {
