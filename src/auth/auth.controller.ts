@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '@auth/auth.service';
@@ -18,6 +19,8 @@ import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.inter
 import { JwtAuthGuard } from '@auth/guardies/jwt-auth.guard';
 import { GoogleAuthGuard } from '@auth/guardies/google-auth.guard';
 import { NaverAuthGuard } from '@auth/guardies/naver-auth.guard';
+import { Response } from 'express';
+import { RefreshTokenGuard } from '@auth/guardies/refresh-token.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -34,14 +37,26 @@ export class AuthController {
   @Post('/login')
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginUserDto })
-  async loginUser(
-    @Req() req: RequestWithUserInterface,
-  ): Promise<{ user: User; accessToken: string }> {
+  async loginUser(@Req() req: RequestWithUserInterface, @Res() res: Response) {
     const user: User = await req.user;
-    const accessToken: string = await this.authService.generateAccessToken(
-      user.id,
-    );
-    return { user, accessToken };
+    const { accessToken, accessCookie } =
+      await this.authService.generateAccessToken(user.id);
+    const { refreshToken, refreshCookie } =
+      await this.authService.generateRefreshToken(user.id);
+    await this.authService.setCurrentRefreshTokenToRedis(refreshToken, user.id);
+
+    res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
+    res.send({ user });
+  }
+
+  // refreshToken 생성
+  @UseGuards(RefreshTokenGuard)
+  @Get('/refresh')
+  async refresh(@Req() req: RequestWithUserInterface) {
+    const { accessToken, accessCookie } =
+      await this.authService.generateAccessToken(req.user.id);
+    req.res.setHeader('Set-Cookie', accessCookie);
+    return { user: req.user, accessToken };
   }
 
   // 로그인한 유저 프로필 정보 가져오기
@@ -66,10 +81,20 @@ export class AuthController {
   @HttpCode(200)
   @Get('/google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleLoginCallback(@Req() req: RequestWithUserInterface) {
+  async googleLoginCallback(
+    @Req() req: RequestWithUserInterface,
+    @Res() res: Response,
+  ) {
     const user = req.user;
-    const accessToken = await this.authService.generateAccessToken(user.id);
-    return { user, accessToken };
+
+    const { accessToken, accessCookie } =
+      await this.authService.generateAccessToken(user.id);
+    const { refreshToken, refreshCookie } =
+      await this.authService.generateRefreshToken(user.id);
+    await this.authService.setCurrentRefreshTokenToRedis(refreshToken, user.id);
+
+    res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
+    res.send({ user });
   }
 
   // 네이버 로그인
@@ -84,9 +109,19 @@ export class AuthController {
   @HttpCode(200)
   @Get('/naver/callback')
   @UseGuards(NaverAuthGuard)
-  async naverLoginCallback(@Req() req: RequestWithUserInterface) {
+  async naverLoginCallback(
+    @Req() req: RequestWithUserInterface,
+    @Res() res: Response,
+  ) {
     const user = req.user;
-    const accessToken = await this.authService.generateAccessToken(user.id);
-    return { user, accessToken };
+
+    const { accessToken, accessCookie } =
+      await this.authService.generateAccessToken(user.id);
+    const { refreshToken, refreshCookie } =
+      await this.authService.generateRefreshToken(user.id);
+    await this.authService.setCurrentRefreshTokenToRedis(refreshToken, user.id);
+
+    res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
+    res.send({ user });
   }
 }

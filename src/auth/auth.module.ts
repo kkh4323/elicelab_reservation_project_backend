@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtAuthStrategy } from '@auth/strategies/jwt-auth.strategy';
 import { GoogleAuthStrategy } from '@auth/strategies/google-auth.strategy';
 import { NaverAuthStrategy } from '@auth/strategies/naver-auth.strategy';
+import { RefreshTokenStrategy } from '@auth/strategies/refresh-token.strategy';
 
 @Module({
   imports: [UserModule, JwtModule.register({}), ConfigModule],
@@ -18,6 +19,7 @@ import { NaverAuthStrategy } from '@auth/strategies/naver-auth.strategy';
     JwtAuthStrategy,
     GoogleAuthStrategy,
     NaverAuthStrategy,
+    RefreshTokenStrategy,
   ],
 })
 export class AuthModule {}
