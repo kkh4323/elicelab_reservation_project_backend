@@ -22,7 +22,11 @@ export class AuthController {
   @Post('/login')
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginUserDto })
-  async loginUser(@Req() req: RequestWithUserInterface): Promise<User> {
-    return await this.authService.loginUser(req.user);
+  async loginUser(
+    @Req() req: RequestWithUserInterface,
+  ): Promise<{ user: User; token: string }> {
+    const user: User = await req.user;
+    const token: string = await this.authService.generateAccessToken(user.id);
+    return { user, token };
   }
 }
