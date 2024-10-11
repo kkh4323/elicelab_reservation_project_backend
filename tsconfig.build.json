@@ -1,4 +1,12 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",  // 빌드 파일을 저장할 디렉토리
+    "declaration": true,  // 타입 정의 파일 생성
+    "sourceMap": true,  // 소스맵 파일 생성
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true
+  },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
