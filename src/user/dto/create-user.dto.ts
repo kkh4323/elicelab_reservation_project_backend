@@ -4,7 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  MinLength,
+  Matches,
 } from 'class-validator';
 import { Provider } from '@user/entities/provider.enum';
 
@@ -16,7 +16,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'asdf123!', minLength: 8 })
   @IsString()
-  @MinLength(8, { message: '비밀번호는 최소 8자 이상이어야 합니다.' })
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/)
   @IsOptional()
   password?: string;
 
