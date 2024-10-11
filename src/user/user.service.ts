@@ -16,7 +16,7 @@ export class UserService {
   ) {}
 
   // [관리자] 전체 유저 가져오는 로직
-  async getUsers(): Promise<User[]> {
+  async getUserDatas(): Promise<User[]> {
     const users: User[] = await this.userRepository.find();
     return users;
   }

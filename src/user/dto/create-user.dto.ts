@@ -7,6 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Provider } from '@user/entities/provider.enum';
+import { Role } from '@user/entities/role.enum';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'kkh4323@naver.com', uniqueItems: true })
@@ -40,4 +41,11 @@ export class CreateUserDto {
   })
   @IsOptional()
   provider?: Provider;
+
+  @ApiProperty({
+    enum: Role,
+    example: Role.USER,
+  })
+  @IsOptional()
+  role?: Role;
 }
