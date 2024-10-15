@@ -9,9 +9,10 @@ import { JwtAuthStrategy } from '@auth/strategies/jwt-auth.strategy';
 import { GoogleAuthStrategy } from '@auth/strategies/google-auth.strategy';
 import { NaverAuthStrategy } from '@auth/strategies/naver-auth.strategy';
 import { RefreshTokenStrategy } from '@auth/strategies/refresh-token.strategy';
+import { EmailModule } from '@email/email.module';
 
 @Module({
-  imports: [UserModule, JwtModule.register({}), ConfigModule],
+  imports: [UserModule, JwtModule.register({}), ConfigModule, EmailModule],
   controllers: [AuthController],
   providers: [
     AuthService,

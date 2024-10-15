@@ -7,6 +7,7 @@ import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { RedisModule } from '@redis/redis.module';
 import { SpaceModule } from '@space/space.module';
+import { EmailModule } from '@email/email.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SpaceModule } from '@space/space.module';
     AuthModule,
     RedisModule,
     SpaceModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

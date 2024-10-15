@@ -10,6 +10,7 @@ import { TokenPayloadInterface } from '@auth/interfaces/TokenPayloadInterface';
 import { Provider } from '@user/entities/provider.enum';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/common/cache';
+import { EmailService } from '@email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -17,15 +18,36 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   // 회원가입 로직
   async signinUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.createUser({
-      ...createUserDto,
-      provider: Provider.LOCAL,
-    });
+    try {
+      const createdUser: User = await this.userService.createUser({
+        ...createUserDto,
+        provider: Provider.LOCAL,
+      });
+
+      await this.emailService.sendMail({
+        to: createUserDto.email,
+        subject: '엘리스Lab 회원가입',
+        text: `엘리스Lab 회원 가입이 완료되었습니다. ID는 ${createUserDto.email}입니다.`,
+      });
+      return createdUser;
+    } catch (err) {
+      if (err?.code === '23505') {
+        throw new HttpException(
+          `ID ${createUserDto.email} already exists`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      throw new HttpException(
+        'something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   // 로그인 로직

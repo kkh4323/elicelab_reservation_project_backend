@@ -9,6 +9,7 @@
       "@auth/*": ["./src/auth/*"],
       "@redis/*": ["./src/redis/*"],
       "@space/*": ["./src/space/*"],
+      "@email/*": ["./src/email/*"],
     }
   }
 }
