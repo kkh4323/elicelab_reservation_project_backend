@@ -8,6 +8,7 @@ import { AuthModule } from '@auth/auth.module';
 import { RedisModule } from '@redis/redis.module';
 import { SpaceModule } from '@space/space.module';
 import { EmailModule } from '@email/email.module';
+import { MinioClientModule } from '@minio-client/minio-client.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EmailModule } from '@email/email.module';
     RedisModule,
     SpaceModule,
     EmailModule,
+    MinioClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

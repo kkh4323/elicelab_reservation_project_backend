@@ -10,6 +10,7 @@
       "@redis/*": ["./src/redis/*"],
       "@space/*": ["./src/space/*"],
       "@email/*": ["./src/email/*"],
+      "@minio-client/*": ["./src/minio-client/*"],
     }
   }
 }
