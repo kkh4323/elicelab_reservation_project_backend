@@ -18,7 +18,7 @@ export class MinioClientService {
     this.logger = new Logger('MinioStorageService');
     this.baseBucket = this.configService.get<string>('MINIO_BUCKET');
   }
-  public async uploadProfileImg(
+  public async uploadSpaceImg(
     user: User,
     file: BufferedFile,
     categoryName: string,

@@ -21,6 +21,8 @@ import { GoogleAuthGuard } from '@auth/guardies/google-auth.guard';
 import { NaverAuthGuard } from '@auth/guardies/naver-auth.guard';
 import { Response } from 'express';
 import { RefreshTokenGuard } from '@auth/guardies/refresh-token.guard';
+import { VerifyEmailDto } from '@user/dto/verify-email.dto';
+import { SendEmailDto } from '@user/dto/send-email.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -67,6 +69,20 @@ export class AuthController {
     @Req() req: RequestWithUserInterface,
   ): Promise<User> {
     return req.user;
+  }
+
+  // [관리자] 이메일 전송
+  @Post('/email/send')
+  async sendEmail(@Body() sendEmailDto: SendEmailDto): Promise<void> {
+    return await this.authService.sendEmail(sendEmailDto);
+  }
+
+  // 인증코드 비교
+  @Post('/email/verify')
+  async verifyEmailWithCode(
+    @Body() verifyEmailDto: VerifyEmailDto,
+  ): Promise<boolean> {
+    return await this.authService.verifyEmail(verifyEmailDto);
   }
 
   // 구글 로그인

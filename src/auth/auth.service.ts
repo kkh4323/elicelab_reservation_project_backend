@@ -11,6 +11,8 @@ import { Provider } from '@user/entities/provider.enum';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/common/cache';
 import { EmailService } from '@email/email.service';
+import { VerifyEmailDto } from '@user/dto/verify-email.dto';
+import { SendEmailDto } from '@user/dto/send-email.dto';
 
 @Injectable()
 export class AuthService {
@@ -107,5 +109,33 @@ export class AuthService {
       saltValue,
     );
     await this.cacheManager.set(userId, currentHashedRefreshToken);
+  }
+
+  async sendEmail(sendEmailDto: SendEmailDto): Promise<void> {
+    const generatedNumber: string = this.generateOTP();
+
+    await this.cacheManager.set(sendEmailDto.email, generatedNumber);
+    await this.emailService.sendMail({
+      to: sendEmailDto.email,
+      subject: '[엘리스Lab] 가입 인증 메일입니다.',
+      text: `엘리스랩 가입 인증 메일입니다. 인증번호는 ${generatedNumber}입니다.`,
+    });
+  }
+
+  async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<boolean> {
+    const emailCodeByRedis = await this.cacheManager.get(verifyEmailDto.email);
+    if (emailCodeByRedis !== verifyEmailDto.code) {
+      throw new HttpException('Wrong Code Provided.', HttpStatus.BAD_REQUEST);
+    }
+    await this.cacheManager.del(verifyEmailDto.email);
+    return true;
+  }
+
+  generateOTP() {
+    let OTP: string = '';
+    for (let i: number = 1; i <= 6; i++) {
+      OTP += Math.floor(Math.random() * 10);
+    }
+    return OTP;
   }
 }

@@ -12,7 +12,7 @@ import { MinioModule } from 'nestjs-minio-client';
       useFactory: async (configService: ConfigService) => ({
         endPoint: configService.get('MINIO_ENDPOINT'),
         accessKey: configService.get('MINIO_ROOT_USER'),
-        secretKey: configService.get('MINIO_ROOD_PASSWORD'),
+        secretKey: configService.get('MINIO_ROOT_PASSWORD'),
         port: configService.get('MINIO_PORT'),
         useSSL: false,
       }),

@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Space } from '@space/entities/space.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateSpaceDto } from '@space/dto/create-space.dto';
+import { MinioClientService } from '@minio-client/minio-client.service';
 
 @Injectable()
 export class SpaceService {
   constructor(
     @InjectRepository(Space)
     private spaceRepository: Repository<Space>,
+    private readonly minioClientService: MinioClientService,
   ) {}
 
   // [관리자] 공간 생성하는 로직

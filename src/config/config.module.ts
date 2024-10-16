@@ -30,6 +30,10 @@ import * as Joi from '@hapi/joi';
         MINIO_ROOT_USER: Joi.string().required(),
         MINIO_ROOT_PASSWORD: Joi.string().required(),
         MINIO_DEFAULT_BUCKETS: Joi.string().required(),
+
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
+        REDIS_TTL: Joi.number().required(),
       }),
     }),
   ],
