@@ -36,8 +36,9 @@ services:
       - elice_network
   minio:
 #    image: docker.io/bitnami/minio:2022
+    container_name: elicelab_reservation_minio
     image: minio/minio:latest
-    command: server /data
+    command: server /data --console-address ":9001"
     env_file:
       - .env
     ports:
@@ -45,6 +46,8 @@ services:
       - "9001:9001"
     volumes:
       - ./data:/data
+    networks:
+      - elice_network
 
 
 networks:
