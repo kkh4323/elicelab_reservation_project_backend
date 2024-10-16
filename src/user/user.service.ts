@@ -6,6 +6,8 @@ import { CreateUserDto } from '@user/dto/create-user.dto';
 import { CACHE_MANAGER } from '@nestjs/common/cache';
 import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcryptjs';
+import { MinioClientService } from '@minio-client/minio-client.service';
+import { BufferedFile } from '@minio-client/file.model';
 
 @Injectable()
 export class UserService {
@@ -13,6 +15,7 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly minioClientService: MinioClientService,
   ) {}
 
   // [관리자] 전체 유저 가져오는 로직
@@ -53,5 +56,22 @@ export class UserService {
     if (isRefreshTokenMatching) {
       return user;
     }
+  }
+
+  // 유저 정보 수정하는 로직
+  async updateUserById(
+    user: User,
+    image?: BufferedFile,
+    updateUserDto?: CreateUserDto,
+  ) {
+    const profileImg = await this.minioClientService.uploadProfileImg(
+      user,
+      image,
+      'profile',
+    );
+    return await this.userRepository.update(user.id, {
+      ...updateUserDto,
+      profileImg,
+    });
   }
 }

@@ -1,10 +1,11 @@
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '@root/common/base.entity';
 import * as bcrypt from 'bcryptjs';
 import * as gravatar from 'gravatar';
 import { Exclude } from 'class-transformer';
 import { Provider } from '@user/entities/provider.enum';
 import { Role } from '@user/entities/role.enum';
+import { Reservation } from '@reservation/entities/reservation.entity';
 
 @Entity()
 export class User extends BaseEntity {

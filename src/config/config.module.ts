@@ -27,6 +27,8 @@ import * as Joi from '@hapi/joi';
 
         MINIO_ENDPOINT: Joi.string().required(),
         MINIO_PORT: Joi.number().required(),
+        MINIO_ACCESS_KEY: Joi.string().required(),
+        MINIO_SECRET_KEY: Joi.string().required(),
         MINIO_ROOT_USER: Joi.string().required(),
         MINIO_ROOT_PASSWORD: Joi.string().required(),
         MINIO_DEFAULT_BUCKETS: Joi.string().required(),

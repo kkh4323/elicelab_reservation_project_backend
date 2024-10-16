@@ -28,9 +28,6 @@ export class Space extends BaseEntity {
   @Column({ nullable: true })
   public maxPeople?: number;
 
-  @Column('text', {
-    array: true,
-    nullable: true,
-  })
-  public spaceImgs: string[];
+  @Column()
+  public spaceImg: string;
 }

@@ -48,13 +48,8 @@ export class CreateSpaceDto {
   @IsNumber({}, { message: '최대 인원 수는 숫자여야 합니다.' })
   maxPeople?: number;
 
-  @ApiProperty({
-    example: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
-    type: [String],
-    required: false,
-  })
-  @IsOptional()
-  @IsArray({ message: '이미지 URL 배열 형식이어야 합니다.' })
+  @ApiProperty()
+  // @IsArray({ message: '이미지 URL 배열 형식이어야 합니다.' })
   @IsString({ each: true, message: '이미지 URL은 문자열이어야 합니다.' })
-  spaceImgs?: string[];
+  spaceImg: string;
 }

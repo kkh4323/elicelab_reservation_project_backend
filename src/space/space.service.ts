@@ -4,6 +4,8 @@ import { Space } from '@space/entities/space.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateSpaceDto } from '@space/dto/create-space.dto';
 import { MinioClientService } from '@minio-client/minio-client.service';
+import { User } from '@user/entities/user.entity';
+import { BufferedFile } from '@minio-client/file.model';
 
 @Injectable()
 export class SpaceService {
@@ -14,8 +16,21 @@ export class SpaceService {
   ) {}
 
   // [관리자] 공간 생성하는 로직
-  async createSpace(createSpaceDto: CreateSpaceDto): Promise<Space> {
-    const newSpace: Space = await this.spaceRepository.create(createSpaceDto);
+  async createSpace(
+    user: User,
+    createSpaceDto?: CreateSpaceDto,
+    image?: BufferedFile,
+  ): Promise<Space> {
+    const newImage = await this.minioClientService.uploadSpaceImg(
+      user,
+      image,
+      `${createSpaceDto.name}`,
+    );
+    console.log('newImage: ', newImage);
+    const newSpace: Space = await this.spaceRepository.create({
+      ...createSpaceDto,
+      spaceImg: newImage,
+    });
     await this.spaceRepository.save(newSpace);
     return newSpace;
   }

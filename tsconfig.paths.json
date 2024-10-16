@@ -11,6 +11,7 @@
       "@space/*": ["./src/space/*"],
       "@email/*": ["./src/email/*"],
       "@minio-client/*": ["./src/minio-client/*"],
+      "@reservation/*": ["./src/reservation/*"],
     }
   }
 }

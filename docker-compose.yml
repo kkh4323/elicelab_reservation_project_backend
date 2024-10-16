@@ -1,39 +1,39 @@
 version: '3'
 services:
-  nestjs:
-    container_name: elicelab_reservation_nestjs
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - elice_network
-    volumes:
-      - .:/app
+#  nestjs:
+#    container_name: elicelab_reservation_nestjs
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8000:8000"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - postgres
+#      - redis
+#    networks:
+#      - elice_network
+#    volumes:
+#      - .:/app
   postgres:
     container_name: elicelab_reservation_postgres
     image: postgres:latest
     ports:
-      - "5433:5432"
+      - "5432:5432"
     env_file:
       - .env
-    networks:
-      - elice_network
+#    networks:
+#      - elice_network
   redis:
     container_name: Kangho_redis
     image: "redis:alpine"
     env_file:
       - .env
     ports:
-      - "6380:6379"
-    networks:
-      - elice_network
+      - "6379:6379"
+#    networks:
+#      - elice_network
   minio:
 #    image: docker.io/bitnami/minio:2022
     container_name: elicelab_reservation_minio
@@ -46,10 +46,10 @@ services:
       - "9001:9001"
     volumes:
       - ./data:/data
-    networks:
-      - elice_network
+#    networks:
+#      - elice_network
 
 
-networks:
-  elice_network:
-    driver: bridge
+#networks:
+#  elice_network:
+#    driver: bridge
