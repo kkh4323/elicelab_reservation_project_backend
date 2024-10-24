@@ -10,6 +10,7 @@ import { SpaceModule } from '@space/space.module';
 import { EmailModule } from '@email/email.module';
 import { MinioClientModule } from '@minio-client/minio-client.module';
 import { ReservationModule } from '@reservation/reservation.module';
+import { NoticeModule } from '@notice/notice.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ReservationModule } from '@reservation/reservation.module';
     EmailModule,
     MinioClientModule,
     ReservationModule,
+    NoticeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

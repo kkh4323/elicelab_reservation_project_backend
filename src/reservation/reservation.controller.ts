@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { ReservationService } from './reservation.service';
+import { ReservationService } from '@reservation/reservation.service';
 import { CreateReservationDto } from '@reservation/dto/create-reservation.dto';
 
 @Controller('reservation')
