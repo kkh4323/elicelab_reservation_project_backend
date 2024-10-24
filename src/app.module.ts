@@ -11,6 +11,7 @@ import { EmailModule } from '@email/email.module';
 import { MinioClientModule } from '@minio-client/minio-client.module';
 import { ReservationModule } from '@reservation/reservation.module';
 import { NoticeModule } from '@notice/notice.module';
+import { CommentModule } from '@comment/comment.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NoticeModule } from '@notice/notice.module';
     MinioClientModule,
     ReservationModule,
     NoticeModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

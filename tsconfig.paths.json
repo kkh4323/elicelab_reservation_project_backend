@@ -13,6 +13,7 @@
       "@minio-client/*": ["./src/minio-client/*"],
       "@reservation/*": ["./src/reservation/*"],
       "@notice/*": ["./src/notice/*"],
+      "@comment/*": ["./src/comment/*"],
     }
   }
 }

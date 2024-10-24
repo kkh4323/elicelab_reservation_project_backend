@@ -7,6 +7,7 @@ import { Provider } from '@user/entities/provider.enum';
 import { Role } from '@user/entities/role.enum';
 import { Reservation } from '@reservation/entities/reservation.entity';
 import { Notice } from '@notice/entities/notice.entity';
+import { Comment } from '@comment/entities/comment.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -46,6 +47,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Notice, (notice: Notice) => notice.user)
   public notices?: string[];
+
+  @OneToMany(() => Comment, (comment: Comment) => comment.notice)
+  public comments?: string[];
 
   @BeforeInsert()
   async beforeSaveFunction() {
