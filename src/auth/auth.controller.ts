@@ -23,6 +23,7 @@ import { Response } from 'express';
 import { RefreshTokenGuard } from '@auth/guardies/refresh-token.guard';
 import { VerifyEmailDto } from '@user/dto/verify-email.dto';
 import { SendEmailDto } from '@user/dto/send-email.dto';
+import { KakaoAuthGuard } from '@auth/guardies/kakao-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -126,6 +127,34 @@ export class AuthController {
   @Get('/naver/callback')
   @UseGuards(NaverAuthGuard)
   async naverLoginCallback(
+    @Req() req: RequestWithUserInterface,
+    @Res() res: Response,
+  ) {
+    const user = req.user;
+
+    const { accessToken, accessCookie } =
+      await this.authService.generateAccessToken(user.id);
+    const { refreshToken, refreshCookie } =
+      await this.authService.generateRefreshToken(user.id);
+    await this.authService.setCurrentRefreshTokenToRedis(refreshToken, user.id);
+
+    res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
+    res.send({ user });
+  }
+
+  // 카카오 로그인
+  @HttpCode(200)
+  @Get('/kakao')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoLogin() {
+    return HttpStatus.OK;
+  }
+
+  // 카카오 로그인 콜백
+  @HttpCode(200)
+  @Get('/kakao/callback')
+  @UseGuards(KakaoAuthGuard)
+  async kakaoLoginCallback(
     @Req() req: RequestWithUserInterface,
     @Res() res: Response,
   ) {

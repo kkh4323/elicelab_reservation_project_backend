@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -20,6 +21,7 @@ import { CreateUserDto } from '@user/dto/create-user.dto';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 import { BufferedFile } from '@minio-client/file.model';
 import { createTransport } from 'nodemailer';
+import { UserPageOptionsDto } from '@root/common/dto/user-page-options.dto';
 
 @Controller('user')
 @ApiTags('user')
@@ -29,8 +31,8 @@ export class UserController {
   // [관리자] 전체 유저 정보 가져오는 api
   @Get()
   @UseGuards(RoleGuard(Role.ADMIN))
-  async getUserDatas(): Promise<User[]> {
-    return await this.userService.getUserDatas();
+  async getUserDatas(@Query() userPageOptionsDto: UserPageOptionsDto) {
+    return await this.userService.getUserDatas(userPageOptionsDto);
   }
 
   // [관리자] 상세 유저 정보 가져오는 api

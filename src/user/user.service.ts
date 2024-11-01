@@ -8,6 +8,9 @@ import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcryptjs';
 import { MinioClientService } from '@minio-client/minio-client.service';
 import { BufferedFile } from '@minio-client/file.model';
+import { UserPageOptionsDto } from '@root/common/dto/user-page-options.dto';
+import { PageDto } from '@root/common/dto/page.dto';
+import { PageMetaDto } from '@root/common/dto/page-meta.dto';
 
 @Injectable()
 export class UserService {
@@ -19,9 +22,51 @@ export class UserService {
   ) {}
 
   // [관리자] 전체 유저 가져오는 로직
-  async getUserDatas(): Promise<User[]> {
-    const users: User[] = await this.userRepository.find();
-    return users;
+  async getUserDatas(
+    userPageOptionsDto: UserPageOptionsDto,
+  ): Promise<PageDto<User>> {
+    // const users: User[] = await this.userRepository.find();
+    // return users;
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    if (userPageOptionsDto.username) {
+      queryBuilder.andWhere('user.username = :username', {
+        username: userPageOptionsDto.username,
+      });
+    }
+    if (userPageOptionsDto.email) {
+      queryBuilder.andWhere('user.email = :email', {
+        email: userPageOptionsDto.email,
+      });
+    }
+    if (userPageOptionsDto.phone) {
+      queryBuilder.andWhere('user.phone = :phone', {
+        phone: userPageOptionsDto.phone,
+      });
+    }
+    // if (userPageOptionsDto.roles) {
+    //   queryBuilder.andWhere('user.roles = :roles', {
+    //     roles: userPageOptionsDto.roles,
+    //   });
+    // }
+    if (userPageOptionsDto.roles) {
+      queryBuilder.andWhere(`array_to_string(user.roles, ',') ILIKE :roles`, {
+        roles: `%${userPageOptionsDto.roles}%`,
+      });
+    }
+    queryBuilder
+      .leftJoinAndSelect('user.agreeOfTerm', 'agreeOfTerm')
+      .orderBy('user.createdAt', userPageOptionsDto.order)
+      .skip(userPageOptionsDto.skip)
+      .take(userPageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: userPageOptionsDto,
+    });
+    return new PageDto(entities, pageMetaDto);
   }
 
   // 유저 생성하는 로직
