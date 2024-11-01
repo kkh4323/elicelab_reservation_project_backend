@@ -6,7 +6,9 @@ import { Category } from '@notice/entities/category.enum';
 
 @Entity()
 export class Notice extends BaseEntity {
-  @ManyToOne(() => User, (user: User) => user.notices)
+  @ManyToOne(() => User, (user: User) => user.notices, {
+    onDelete: 'CASCADE',
+  })
   public user: User;
 
   @Column({ type: 'enum', enum: Category, default: Category.NOTICE })

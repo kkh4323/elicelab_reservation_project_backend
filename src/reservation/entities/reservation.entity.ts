@@ -6,7 +6,9 @@ import { Space } from '@space/entities/space.entity';
 @Entity()
 @Unique(['user', 'space', 'reservationDate'])
 export class Reservation extends BaseEntity {
-  @ManyToOne(() => User, (user: User) => user.reservations)
+  @ManyToOne(() => User, (user: User) => user.reservations, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   public user: User;
 
