@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UploadedFiles,
   UseGuards,
@@ -21,6 +22,7 @@ import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.inter
 import { BufferedFile } from '@minio-client/file.model';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MinioClientService } from '@minio-client/minio-client.service';
+import { SpacePageOptionsDto } from '@root/common/dto/space-page-options.dto';
 
 @Controller('space')
 @ApiTags('space')
@@ -45,8 +47,8 @@ export class SpaceController {
   }
 
   @Get()
-  async getSpaces(): Promise<Space[]> {
-    return await this.spaceService.getSpaces();
+  async getSpaces(@Query() spacePageOptionsDto: SpacePageOptionsDto) {
+    return await this.spaceService.getSpaces(spacePageOptionsDto);
   }
 
   @Get('/:id')

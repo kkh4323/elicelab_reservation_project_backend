@@ -6,6 +6,9 @@ import { CreateSpaceDto } from '@space/dto/create-space.dto';
 import { MinioClientService } from '@minio-client/minio-client.service';
 import { User } from '@user/entities/user.entity';
 import { BufferedFile } from '@minio-client/file.model';
+import { SpacePageOptionsDto } from '@root/common/dto/space-page-options.dto';
+import { PageMetaDto } from '@root/common/dto/page-meta.dto';
+import { PageDto } from '@root/common/dto/page.dto';
 
 @Injectable()
 export class SpaceService {
@@ -30,8 +33,35 @@ export class SpaceService {
   }
 
   // 공간 전체 가져오는 로직
-  async getSpaces(): Promise<Space[]> {
-    return await this.spaceRepository.find({});
+  async getSpaces(spacePageOptionsDto: SpacePageOptionsDto) {
+    const queryBuilder = this.spaceRepository.createQueryBuilder('space');
+    if (spacePageOptionsDto.name) {
+      queryBuilder.andWhere('space.name = :name', {
+        name: spacePageOptionsDto.name,
+      });
+    }
+    if (spacePageOptionsDto.zone) {
+      queryBuilder.andWhere('space.zone = :zone', {
+        zone: spacePageOptionsDto.zone,
+      });
+    }
+    if (spacePageOptionsDto.location) {
+      queryBuilder.andWhere('space.location = :location', {
+        location: spacePageOptionsDto.location,
+      });
+    }
+    queryBuilder
+      .orderBy('space.name', spacePageOptionsDto.order)
+      .skip(spacePageOptionsDto.skip)
+      .take(spacePageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+    const pageMetaDto = new PageMetaDto({
+      itemCount,
+      pageOptionsDto: spacePageOptionsDto,
+    });
+    return new PageDto(entities, pageMetaDto);
   }
 
   // 상세 공간 가져오는 로직
