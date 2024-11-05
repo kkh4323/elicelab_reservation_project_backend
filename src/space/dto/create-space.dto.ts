@@ -45,11 +45,15 @@ export class CreateSpaceDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber({}, { message: '최대 인원 수는 숫자여야 합니다.' })
+  // @IsNumber({}, { message: '최대 인원 수는 숫자여야 합니다.' })
   maxPeople?: number;
 
-  @ApiProperty()
-  // @IsArray({ message: '이미지 URL 배열 형식이어야 합니다.' })
-  @IsString({ each: true, message: '이미지 URL은 문자열이어야 합니다.' })
-  spaceImg: string;
+  @ApiProperty({
+    description: 'Space Images',
+    type: 'array',
+    items: { type: 'string', format: 'binary' },
+  })
+  @IsOptional()
+  @IsArray()
+  spaceImgs?: any[];
 }

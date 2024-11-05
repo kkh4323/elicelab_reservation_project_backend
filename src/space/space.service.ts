@@ -16,21 +16,15 @@ export class SpaceService {
   ) {}
 
   // [관리자] 공간 생성하는 로직
-  async createSpace(
-    user: User,
-    createSpaceDto?: CreateSpaceDto,
-    image?: BufferedFile,
-  ): Promise<Space> {
-    const newImage = await this.minioClientService.uploadSpaceImg(
-      user,
-      image,
-      `${createSpaceDto.name}`,
+  async createSpace(createSpaceDto?: CreateSpaceDto, images?: BufferedFile[]) {
+    const newSpace: Space = await this.spaceRepository.create(createSpaceDto);
+    await this.spaceRepository.save(newSpace);
+    const spaceImgs = await this.minioClientService.uploadSpaceImgs(
+      newSpace.id,
+      images,
+      'space',
     );
-    console.log('newImage: ', newImage);
-    const newSpace: Space = await this.spaceRepository.create({
-      ...createSpaceDto,
-      spaceImg: newImage,
-    });
+    newSpace.spaceImgs = spaceImgs;
     await this.spaceRepository.save(newSpace);
     return newSpace;
   }

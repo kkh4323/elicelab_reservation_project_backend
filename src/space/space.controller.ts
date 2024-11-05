@@ -7,7 +7,7 @@ import {
   Post,
   Put,
   Req,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,30 +19,29 @@ import { Space } from '@space/entities/space.entity';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 import { BufferedFile } from '@minio-client/file.model';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { MinioClientService } from '@minio-client/minio-client.service';
 
 @Controller('space')
 @ApiTags('space')
 export class SpaceController {
-  constructor(private readonly spaceService: SpaceService) {}
+  constructor(
+    private readonly spaceService: SpaceService,
+    private readonly minioClientService: MinioClientService,
+  ) {}
 
   @Post('/create')
   @UseGuards(RoleGuard(Role.ADMIN))
-  @UseInterceptors(FileInterceptor('spaceImg'))
+  @UseInterceptors(FilesInterceptor('spaceImgs')) // Allow up to 5 files
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateSpaceDto })
   async createSpace(
     @Req() req: RequestWithUserInterface,
     @Body() createSpaceDto?: CreateSpaceDto,
-    @UploadedFile() spaceImg?: BufferedFile,
+    @UploadedFiles() spaceImgs?: BufferedFile[],
   ): Promise<Space> {
-    console.log('spaceImg: ', spaceImg);
-    console.log('req: ', req);
-    return await this.spaceService.createSpace(
-      req.user,
-      createSpaceDto,
-      spaceImg,
-    );
+    console.log('++++++++++++++++++++++++++++++', spaceImgs);
+    return await this.spaceService.createSpace(createSpaceDto, spaceImgs);
   }
 
   @Get()

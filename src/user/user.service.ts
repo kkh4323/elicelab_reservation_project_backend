@@ -54,7 +54,7 @@ export class UserService {
       });
     }
     queryBuilder
-      .leftJoinAndSelect('user.agreeOfTerm', 'agreeOfTerm')
+      // .leftJoinAndSelect('user.agreeOfTerm', 'agreeOfTerm')
       .orderBy('user.createdAt', userPageOptionsDto.order)
       .skip(userPageOptionsDto.skip)
       .take(userPageOptionsDto.take);

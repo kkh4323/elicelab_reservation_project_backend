@@ -3,7 +3,7 @@ import { MinioService } from 'nestjs-minio-client';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@user/entities/user.entity';
 import { BufferedFile } from '@minio-client/file.model';
-import * as crypto from 'node:crypto';
+import * as crypto from 'crypto';
 @Injectable()
 export class MinioClientService {
   private readonly logger: Logger;
@@ -18,64 +18,90 @@ export class MinioClientService {
     this.logger = new Logger('MinioStorageService');
     this.baseBucket = this.configService.get<string>('MINIO_DEFAULT_BUCKETS');
   }
-  public async uploadSpaceImg(
-    user: User,
-    file: BufferedFile,
-    categoryName: string,
+  //
+  public async uploadSpaceImgs(
+    spaceId?: string,
+    files?: BufferedFile[],
+    categoryName?: string,
     baseBucket: string = this.baseBucket,
-  ): Promise<string> {
-    console.log('file: ', file);
-    if (
-      !(
-        file.mimetype.includes('jpg') ||
-        file.mimetype.includes('jpeg') ||
-        file.mimetype.includes('png')
-      )
-    ) {
-      throw new HttpException(
-        'Error uploading file type',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const temp_filename = Date.now().toString();
-    const hashedFileName = crypto
-      .createHash('md5')
-      .update(temp_filename)
-      .digest('hex');
-    const ext = file.originalname.substring(
-      file.originalname.lastIndexOf('.'),
-      file.originalname.length,
-    );
-    const metaData = {
-      'Content-Type': file.mimetype,
-      'X-Amz-Meta-Testing': 1234,
-    };
-    const filename = hashedFileName + ext;
-    const fileBuffer = file.buffer;
-    const filePath = `${categoryName}/${user.id}/${filename}`;
-    console.log('filepath: ', filePath);
-    if (`${categoryName}/${user.id}`.includes(user.id)) {
-      await this.deleteFolderContents(
-        this.baseBucket,
-        `${categoryName}/${user.id}/`,
-      );
-    }
-    this.client.putObject(
-      baseBucket,
-      filePath,
-      fileBuffer,
-      fileBuffer.length,
-      metaData,
-      function (err) {
-        console.log('==============================', err);
-        if (err)
+  ): Promise<string[]> {
+    console.log(files);
+
+    // Ensure files is an array before proceeding
+    // if (!Array.isArray(files) || files.length < 1 || files.length > 10) {
+    //   throw new HttpException(
+    //     'You must upload between 1 or 10 files',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of files) {
+        console.log('file: ', file);
+        if (
+          !(
+            file.mimetype.includes('jpg') ||
+            file.mimetype.includes('jpeg') ||
+            file.mimetype.includes('png')
+          )
+        ) {
           throw new HttpException(
-            'Error uploading file',
+            'Only jpg and png files are allowed.',
             HttpStatus.BAD_REQUEST,
           );
-      },
-    );
-    return `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+        }
+        const temp_filename = Date.now().toString();
+        console.log('temp_filename: ', temp_filename);
+        const hashedFileName = crypto
+          .createHash('md5')
+          .update(temp_filename)
+          .digest('hex');
+        console.log('hashedFileName: ', hashedFileName);
+        const ext = file.originalname.substring(
+          file.originalname.lastIndexOf('.'),
+          file.originalname.length,
+        );
+        const metaData = {
+          'Content-Type': file.mimetype,
+          'X-Amz-Meta-Testing': 1234,
+        };
+        const filename = hashedFileName + ext;
+        const fileBuffer = file.buffer;
+        console.log('fileBuffer: ', fileBuffer);
+        const filePath = `${categoryName}/${spaceId}/${filename}`;
+        console.log('filepath: ', filePath);
+
+        if (`${categoryName}/${spaceId}`.includes(spaceId)) {
+          await this.deleteFolderContents(
+            this.baseBucket,
+            `${categoryName}/${spaceId}/`,
+          );
+        }
+        this.client.putObject(
+          baseBucket,
+          filePath,
+          fileBuffer,
+          fileBuffer.length,
+          metaData,
+          function (err) {
+            console.log('==============================', err);
+            if (err) {
+              throw new HttpException(
+                'Error uploading file',
+                HttpStatus.BAD_REQUEST,
+              );
+            }
+          },
+        );
+        const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+        console.log('-=============', fileUrl);
+        uploadedUrls.push(fileUrl);
+      }
+      return uploadedUrls;
+    } catch (e) {
+      console.log(e.message);
+    }
   }
 
   public async uploadProfileImg(
