@@ -38,6 +38,14 @@ export class BannerService {
     return banners;
   }
 
+  // 배너 하나 조회하는 로직
+  async getBannerById(id: string) {
+    const banner: Banner = await this.bannerRepository.findOneBy({ id });
+    if (!banner)
+      throw new HttpException('Banner is not exist', HttpStatus.NOT_FOUND);
+    return banner;
+  }
+
   // [관리자] 배너 삭제하는 로직
   async deleteBannerById(id: string): Promise<string> {
     const result: DeleteResult = await this.bannerRepository.delete({ id });

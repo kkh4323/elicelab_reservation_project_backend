@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class CreateBannerDto {
   @ApiProperty({
@@ -10,4 +10,17 @@ export class CreateBannerDto {
   @IsOptional()
   @IsArray()
   bannerImgs?: any[];
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'string' },
+  })
+  @IsOptional()
+  @IsArray()
+  tags?: string[];
 }

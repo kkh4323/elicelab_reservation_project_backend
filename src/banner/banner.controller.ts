@@ -43,6 +43,11 @@ export class BannerController {
     return await this.bannerService.getBanners();
   }
 
+  @Get('/:id')
+  async getBannerById(@Param('id') id: string) {
+    return await this.bannerService.getBannerById(id);
+  }
+
   @Delete('/:id')
   @UseGuards(RoleGuard(Role.ADMIN))
   async deleteBannerById(@Param('id') id: string): Promise<string> {
