@@ -18,7 +18,7 @@ export class MinioClientService {
     this.logger = new Logger('MinioStorageService');
     this.baseBucket = this.configService.get<string>('MINIO_DEFAULT_BUCKETS');
   }
-  //
+
   public async uploadSpaceImgs(
     spaceId?: string,
     files?: BufferedFile[],
@@ -102,6 +102,66 @@ export class MinioClientService {
     } catch (e) {
       console.log(e.message);
     }
+  }
+
+  public async uploadBannerImgs(
+    bannerId?: string,
+    files?: BufferedFile[],
+    categoryName?: string,
+    baseBucket: string = this.baseBucket,
+  ): Promise<string[]> {
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      if (
+        !(
+          file.mimetype.includes('jpg') ||
+          file.mimetype.includes('jpeg') ||
+          file.mimetype.includes('png')
+        )
+      ) {
+        throw new HttpException(
+          'Only jpg and png files are allowed.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const temp_filename = Date.now().toString();
+      const hashedFileName = crypto
+        .createHash('md5')
+        .update(temp_filename)
+        .digest('hex');
+      const ext = file.originalname.substring(
+        file.originalname.lastIndexOf('.'),
+        file.originalname.length,
+      );
+      const metaData = {
+        'Content-Type': file.mimetype,
+        'X-Amz-Meta-Testing': 1234,
+      };
+      const filename = hashedFileName + ext;
+      const fileBuffer = file.buffer;
+      const filePath = `${categoryName}/${filename}`;
+
+      this.client.putObject(
+        baseBucket,
+        filePath,
+        fileBuffer,
+        fileBuffer.length,
+        metaData,
+        function (err) {
+          console.log('==============================', err);
+          if (err) {
+            throw new HttpException(
+              'Error uploading file',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+        },
+      );
+      const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+      uploadedUrls.push(fileUrl);
+    }
+    return uploadedUrls;
   }
 
   public async uploadProfileImg(

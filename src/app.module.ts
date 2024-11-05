@@ -12,6 +12,7 @@ import { MinioClientModule } from '@minio-client/minio-client.module';
 import { ReservationModule } from '@reservation/reservation.module';
 import { NoticeModule } from '@notice/notice.module';
 import { CommentModule } from '@comment/comment.module';
+import { BannerModule } from '@banner/banner.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CommentModule } from '@comment/comment.module';
     ReservationModule,
     NoticeModule,
     CommentModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

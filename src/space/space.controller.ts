@@ -42,7 +42,6 @@ export class SpaceController {
     @Body() createSpaceDto?: CreateSpaceDto,
     @UploadedFiles() spaceImgs?: BufferedFile[],
   ): Promise<Space> {
-    console.log('++++++++++++++++++++++++++++++', spaceImgs);
     return await this.spaceService.createSpace(createSpaceDto, spaceImgs);
   }
 
