@@ -6,25 +6,10 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
-  IsObject,
   IsString,
 } from 'class-validator';
 
 export class CreateReservationDto {
-  @ApiProperty({
-    type: () => User,
-  })
-  @IsNotEmpty({ message: '사용자는 필수 항목입니다.' })
-  @IsObject()
-  user: User;
-
-  @ApiProperty({
-    type: () => Space,
-  })
-  @IsNotEmpty({ message: '공간은 필수 항목입니다.' })
-  @IsObject()
-  space: Space;
-
   @ApiProperty({
     example: '2024-10-16',
   })

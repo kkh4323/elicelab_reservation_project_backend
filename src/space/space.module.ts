@@ -9,5 +9,6 @@ import { MinioClientModule } from '@minio-client/minio-client.module';
   imports: [TypeOrmModule.forFeature([Space]), MinioClientModule],
   controllers: [SpaceController],
   providers: [SpaceService],
+  exports: [SpaceService],
 })
 export class SpaceModule {}

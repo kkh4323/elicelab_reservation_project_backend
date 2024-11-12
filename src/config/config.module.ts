@@ -39,6 +39,11 @@ import * as Joi from '@hapi/joi';
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
         REDIS_TTL: Joi.number().required(),
+
+        MS_GRAPH_EMAIL: Joi.string().required(),
+        MS_GRAPH_CLIENT_ID: Joi.string().required(),
+        MS_GRAPH_TENANT_ID: Joi.string().required(),
+        MS_GRAPH_CLIENT_SECRET: Joi.string().required(),
       }),
     }),
   ],
