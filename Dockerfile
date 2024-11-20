@@ -1,23 +1,72 @@
-FROM node:16-alpine
+#FROM node:16-alpine
+#
+#LABEL authors="kanghokim"
+#
+#WORKDIR /app
+#
+#COPY package*.json ./
+#
+#RUN npm install
+#
+#COPY tsconfig.json ./
+#
+#COPY tsconfig.build.json ./
+#
+#COPY tsconfig.paths.json ./
+#
+#COPY . .
+#
+#EXPOSE 8000
+#
+#RUN npm run build
+#
+#CMD ["npm", "run", "start:dev"]
 
-LABEL authors="kanghokim"
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
 
-WORKDIR /app
+FROM node:18-alpine As development
 
-COPY package*.json ./
+WORKDIR /usr/src/app
 
-RUN npm install
+COPY --chown=node:node package*.json ./
 
-COPY tsconfig.json ./
+RUN npm ci --legacy-peer-deps
 
-COPY tsconfig.build.json ./
+COPY --chown=node:node . .
 
-COPY tsconfig.paths.json ./
+USER node
 
-COPY . .
+###################
+# BUILD FOR PRODUCTION
+###################
 
-EXPOSE 8000
+FROM node:18-alpine As build
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node package*.json ./
+
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+
+COPY --chown=node:node . .
 
 RUN npm run build
 
-CMD ["npm", "run", "start:dev"]
+ENV NODE_ENV production
+
+RUN npm ci --only=production && npm cache clean --force
+
+USER node
+
+###################
+# PRODUCTION
+###################
+
+FROM node:18-alpine As production
+
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+CMD [ "node", "dist/main.js" ]

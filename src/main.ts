@@ -1,9 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from '@root/app.module';
 import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { BaseApiDocument } from '@root/common/swagger.document';
 import { HttpExceptionFilter } from '@root/common/filters/http-exception.filter';
 import { TransformInterceptor } from '@root/common/interceptors/transform.interceptor';
@@ -25,6 +25,7 @@ async function bootstrap() {
     new ValidationPipe({ skipMissingProperties: true, transform: true }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalInterceptors(new TransformInterceptor());
 
   // swagger 설정
