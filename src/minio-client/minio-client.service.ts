@@ -164,6 +164,55 @@ export class MinioClientService {
     return uploadedUrls;
   }
 
+  public async uploadReferenceFile(
+    questionId?: string,
+    file?: BufferedFile,
+    categoryName?: string,
+    baseBucket: string = this.baseBucket,
+  ): Promise<string> {
+    if (!file.mimetype.includes('pdf')) {
+      throw new HttpException(
+        'Only pdf file is allowed.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const temp_filename = Date.now().toString();
+    const hashedFileName = crypto
+      .createHash('md5')
+      .update(temp_filename)
+      .digest('hex');
+    const ext = file.originalname.substring(
+      file.originalname.lastIndexOf('.'),
+      file.originalname.length,
+    );
+    const metaData = {
+      'Content-Type': file.mimetype,
+      'X-Amz-Meta-Testing': 1234,
+    };
+    const filename = hashedFileName + ext;
+    const fileBuffer = file.buffer;
+    const filePath = `${categoryName}/${filename}`;
+
+    this.client.putObject(
+      baseBucket,
+      filePath,
+      fileBuffer,
+      fileBuffer.length,
+      metaData,
+      function (err) {
+        if (err) {
+          throw new HttpException(
+            'Error uploading file',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      },
+    );
+    const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+
+    return fileUrl;
+  }
+
   public async uploadProfileImg(
     user: User,
     file: BufferedFile,

@@ -14,7 +14,8 @@
       "@reservation/*": ["./src/reservation/*"],
       "@notice/*": ["./src/notice/*"],
       "@comment/*": ["./src/comment/*"],
-      "@banner/*": ["./src/banner/*"]
+      "@banner/*": ["./src/banner/*"],
+      "@question/*": ["./src/question/*"],
     }
   }
 }

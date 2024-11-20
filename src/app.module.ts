@@ -13,6 +13,7 @@ import { ReservationModule } from '@reservation/reservation.module';
 import { NoticeModule } from '@notice/notice.module';
 import { CommentModule } from '@comment/comment.module';
 import { BannerModule } from '@banner/banner.module';
+import { QuestionModule } from '@question/question.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BannerModule } from '@banner/banner.module';
     NoticeModule,
     CommentModule,
     BannerModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
