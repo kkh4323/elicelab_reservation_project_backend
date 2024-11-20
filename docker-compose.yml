@@ -1,4 +1,17 @@
 services:
+  elicelab_reservation_nginx:
+    image: nginx:stable-alpine
+    container_name: elicelab_reservation_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates
+    ports:
+      - "80:80"
+    depends_on:
+      - elicelab_reservation_nestjs
+    networks:
+      - elice_network
+
   elicelab_reservation_nestjs:
     container_name: elicelab_reservation_nestjs
     build:
