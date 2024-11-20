@@ -63,3 +63,4 @@ test/dist/
 .tmp-compodoc-test/
 documentation
 doc
+.cert/
