@@ -14,7 +14,7 @@ import { MinioModule } from 'nestjs-minio-client';
         accessKey: configService.get('MINIO_ACCESS_KEY'),
         secretKey: configService.get('MINIO_SECRET_KEY'),
         port: configService.get('MINIO_PORT'),
-        useSSL: true,
+        useSSL: false,
       }),
     }),
   ],
