@@ -45,7 +45,7 @@ export class UserController {
   // 유저 정보 수정하는 api
   @Put()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('profileImg'))
+  @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateUserDto })
   @ApiBody({
@@ -66,23 +66,17 @@ export class UserController {
           type: 'string',
           description: 'phone',
         },
-        marketingAgree: {
-          type: 'boolean',
-        },
-        etc: {
-          type: 'boolean',
-        },
       },
     },
   })
   async updateUserById(
     @Req() req: RequestWithUserInterface,
-    @UploadedFile() profileImg?: BufferedFile,
+    @UploadedFile() image?: BufferedFile,
     @Body() updateUserDto?: CreateUserDto,
   ) {
     return await this.userService.updateUserById(
       req.user,
-      profileImg,
+      image,
       updateUserDto,
     );
   }

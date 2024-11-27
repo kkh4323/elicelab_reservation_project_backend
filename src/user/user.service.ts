@@ -114,6 +114,7 @@ export class UserService {
       image,
       'profile',
     );
+    console.log(profileImg);
     return await this.userRepository.update(user.id, {
       ...updateUserDto,
       profileImg,

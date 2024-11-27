@@ -219,6 +219,7 @@ export class MinioClientService {
     categoryName: string,
     baseBucket: string = this.baseBucket,
   ): Promise<string> {
+    console.log('file: ', file);
     if (
       !(
         file.mimetype.includes('jpg') ||
@@ -241,6 +242,7 @@ export class MinioClientService {
       file.originalname.lastIndexOf('.'),
       file.originalname.length,
     );
+    console.log('++++++++++++++++test++++++++++++++++++');
     const metaData = {
       'Content-Type': file.mimetype,
       'X-Amz-Meta-Testing': 1234,
