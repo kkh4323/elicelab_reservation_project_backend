@@ -45,6 +45,11 @@ import * as Joi from '@hapi/joi';
         MS_GRAPH_CLIENT_ID: Joi.string().required(),
         MS_GRAPH_TENANT_ID: Joi.string().required(),
         MS_GRAPH_CLIENT_SECRET: Joi.string().required(),
+
+        EMAIL_BASE_URL: Joi.string().required(),
+
+        FIND_PASSWORD_TOKEN_SECURITY: Joi.string().required(),
+        FIND_PASSWORD_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
   ],

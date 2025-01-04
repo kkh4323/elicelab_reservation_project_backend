@@ -131,6 +131,34 @@ export class AuthService {
     return true;
   }
 
+  // 비밀번호 찾는 이메일 보내기
+  async findPasswordSendEmail(email: string): Promise<string> {
+    const payload = { email };
+    const user: User = await this.userService.getUserByEmail(email);
+
+    if (user.provider !== Provider.LOCAL) {
+      throw new HttpException(
+          'you can change the password for the part you registerd as a social login',
+          HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const token: string = this.jwtService.sign(payload, {
+      secret: this.configService.get('FIND_PASSWORD_TOKEN_SECURITY'),
+      expiresIn: this.configService.get('FIND_PASSWORD_TOKEN_EXPIRATION_TIME'),
+    });
+
+    const url: string = `${this.configService.get('EMAIL_BASE_URL')}/change/password?token=${token}`;
+
+    await this.emailService.sendMail({
+      to: email,
+      subject: `[엘리스Lab] ${email} 비밀번호 찾기`,
+      text: `비밀번호 찾기 링크: ${url}`,
+    });
+
+    return 'sent email and please check your email';
+  }
+
   generateOTP() {
     let OTP: string = '';
     for (let i: number = 1; i <= 6; i++) {

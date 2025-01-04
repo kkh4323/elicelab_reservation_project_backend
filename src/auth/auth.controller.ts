@@ -169,4 +169,9 @@ export class AuthController {
     res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
     res.send({ user });
   }
+
+  @Post('/forgot/password')
+  async forgotPassword(@Body() sendEmailDto: SendEmailDto): Promise<string> {
+    return await this.authService.findPasswordSendEmail(sendEmailDto.email);
+  }
 }
