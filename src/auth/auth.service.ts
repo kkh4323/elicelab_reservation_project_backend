@@ -1,18 +1,18 @@
-import {HttpException, HttpStatus, Inject, Injectable} from '@nestjs/common';
-import {UserService} from '@user/user.service';
-import {CreateUserDto} from '@user/dto/create-user.dto';
-import {User} from '@user/entities/user.entity';
-import {LoginUserDto} from '@user/dto/login-user.dto';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { UserService } from '@user/user.service';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { User } from '@user/entities/user.entity';
+import { LoginUserDto } from '@user/dto/login-user.dto';
 import * as bcrypt from 'bcryptjs';
-import {JwtService} from '@nestjs/jwt';
-import {ConfigService} from '@nestjs/config';
-import {TokenPayloadInterface} from '@auth/interfaces/TokenPayloadInterface';
-import {Provider} from '@user/entities/provider.enum';
-import {Cache} from 'cache-manager';
-import {CACHE_MANAGER} from '@nestjs/common/cache';
-import {EmailService} from '@email/email.service';
-import {VerifyEmailDto} from '@user/dto/verify-email.dto';
-import {SendEmailDto} from '@user/dto/send-email.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { TokenPayloadInterface } from '@auth/interfaces/TokenPayloadInterface';
+import { Provider } from '@user/entities/provider.enum';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/common/cache';
+import { EmailService } from '@email/email.service';
+import { VerifyEmailDto } from '@user/dto/verify-email.dto';
+import { SendEmailDto } from '@user/dto/send-email.dto';
 
 @Injectable()
 export class AuthService {
@@ -138,8 +138,8 @@ export class AuthService {
 
     if (user.provider !== Provider.LOCAL) {
       throw new HttpException(
-          'you can change the password for the part you registerd as a social login',
-          HttpStatus.BAD_REQUEST,
+        'you can change the password for the part you registerd as a social login',
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -153,18 +153,18 @@ export class AuthService {
     await this.emailService.sendMail({
       to: email,
       subject: `[엘리스Lab] ${email} 비밀번호 찾기`,
-      text: `비밀번호 찾기 링크: ${url}`,
+      html: `<a href="${url}" target="_blank">엘리스Lab 비밀번호 변경 링크</a>`,
     });
 
     return 'sent email and please check your email';
   }
 
   async changePassword(user: User, newPassword: string) {
-    const existedUser = await this.userService.getUserByEmail(user.email)
+    const existedUser = await this.userService.getUserByEmail(user.email);
     if (existedUser.provider !== Provider.LOCAL) {
       throw new HttpException(
-          'you have logged in by social ID',
-          HttpStatus.NOT_ACCEPTABLE,
+        'you have logged in by social ID',
+        HttpStatus.NOT_ACCEPTABLE,
       );
     } else {
       return this.userService.saveNewPassword(user, newPassword);
@@ -172,12 +172,9 @@ export class AuthService {
   }
 
   async changePasswordBeforeLogin(newPassword: string, token: string) {
-    const { email } = await this.jwtService.verify(
-        token,
-        {
-          secret: this.configService.get('FIND_PASSWORD_TOKEN_SECURITY'),
-        },
-    );
+    const { email } = await this.jwtService.verify(token, {
+      secret: this.configService.get('FIND_PASSWORD_TOKEN_SECURITY'),
+    });
     console.log(email);
     const user = await this.userService.getUserByEmail(email);
 
