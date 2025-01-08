@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { BaseEntity } from '@root/common/base.entity';
 import * as bcrypt from 'bcryptjs';
 import * as gravatar from 'gravatar';
@@ -8,6 +15,7 @@ import { Role } from '@user/entities/role.enum';
 import { Reservation } from '@reservation/entities/reservation.entity';
 import { Notice } from '@notice/entities/notice.entity';
 import { Comment } from '@comment/entities/comment.entity';
+import { TermOfUse } from '@root/term-of-use/entities/term-of-use.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -51,6 +59,13 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment: Comment) => comment.notice)
   public comments?: string[];
+
+  @OneToOne(() => TermOfUse, (termOfUse: TermOfUse) => termOfUse.user, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  public termOfUse: TermOfUse;
 
   @BeforeInsert()
   async beforeSaveFunction() {

@@ -14,6 +14,7 @@ import { NoticeModule } from '@notice/notice.module';
 import { CommentModule } from '@comment/comment.module';
 import { BannerModule } from '@banner/banner.module';
 import { QuestionModule } from '@question/question.module';
+import { TermOfUseModule } from './term-of-use/term-of-use.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { QuestionModule } from '@question/question.module';
     CommentModule,
     BannerModule,
     QuestionModule,
+    TermOfUseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

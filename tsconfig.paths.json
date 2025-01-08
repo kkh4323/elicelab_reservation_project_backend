@@ -16,6 +16,7 @@
       "@comment/*": ["./src/comment/*"],
       "@banner/*": ["./src/banner/*"],
       "@question/*": ["./src/question/*"],
+      "@term-of-use/*": ["./src/term-of-use/*"],
     }
   }
 }

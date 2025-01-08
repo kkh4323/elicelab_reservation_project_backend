@@ -24,6 +24,7 @@ import { RefreshTokenGuard } from '@auth/guardies/refresh-token.guard';
 import { VerifyEmailDto } from '@user/dto/verify-email.dto';
 import { SendEmailDto } from '@user/dto/send-email.dto';
 import { KakaoAuthGuard } from '@auth/guardies/kakao-auth.guard';
+import {ChangePasswordDto} from "@user/dto/change-password.dto";
 
 @Controller('auth')
 @ApiTags('auth')
@@ -151,7 +152,7 @@ export class AuthController {
   }
 
   // 카카오 로그인 콜백
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @Get('/kakao/callback')
   @UseGuards(KakaoAuthGuard)
   async kakaoLoginCallback(
@@ -170,8 +171,16 @@ export class AuthController {
     res.send({ user });
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('/forgot/password')
   async forgotPassword(@Body() sendEmailDto: SendEmailDto): Promise<string> {
     return await this.authService.findPasswordSendEmail(sendEmailDto.email);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('/change/password/before')
+  async changePasswordBeforeLogin(@Body() changePasswordDto: ChangePasswordDto) {
+    const { newPassword, token } = changePasswordDto;
+    return await this.authService.changePasswordBeforeLogin(newPassword, token)
   }
 }

@@ -90,6 +90,14 @@ export class UserService {
     throw new HttpException('user is not exists', HttpStatus.NOT_FOUND);
   }
 
+  // 패스워드 저장
+  async saveNewPassword(user: User, newPassword: string) {
+    const existedUser = await this.getUserByEmail(user.email);
+    const saltValue = await bcrypt.genSalt(10);
+    existedUser.password = await bcrypt.hash(newPassword, saltValue);
+    return await this.userRepository.save(existedUser);
+  }
+
   // RefreshToken 매칭 하는 로직
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
     const user = await this.getUserById(userId);
