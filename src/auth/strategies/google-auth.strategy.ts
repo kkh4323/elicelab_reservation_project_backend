@@ -27,7 +27,7 @@ export class GoogleAuthStrategy extends PassportStrategy(Strategy) {
     const { displayName, email, provider, photos } = profile;
 
     try {
-      const user: User = await this.userService.getUserByEmail(email);
+      const user: User = await this.userService.getUserBy('email', email);
       if (user.provider !== provider) {
         const err: HttpException = new HttpException(
           `You are already subscribed to ${user.provider}.`,

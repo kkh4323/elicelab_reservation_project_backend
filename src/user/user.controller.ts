@@ -39,7 +39,8 @@ export class UserController {
   @Get('/:id')
   @UseGuards(RoleGuard(Role.ADMIN))
   async getUserById(@Param('id') id: string): Promise<User> {
-    return await this.userService.getUserById(id);
+    // return await this.userService.getUserById(id);
+    return await this.userService.getUserBy('id', id);
   }
 
   // 유저 정보 수정하는 api

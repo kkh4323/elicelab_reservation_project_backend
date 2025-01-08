@@ -8,6 +8,8 @@ import {
 } from 'class-validator';
 import { Provider } from '@user/entities/provider.enum';
 import { Role } from '@user/entities/role.enum';
+import { CreateTermOfUseDto } from '@term-of-use/dto/create-term-of-use.dto';
+import { TermOfUse } from '@term-of-use/entities/term-of-use.entity';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'kkh4323@naver.com', uniqueItems: true })
@@ -30,22 +32,16 @@ export class CreateUserDto {
   @IsOptional()
   phone?: string;
 
-  @ApiProperty({ example: 'https://www.gravat.com/avatar/abc123' })
   @IsOptional()
   @IsString()
   profileImg?: string;
 
-  @ApiProperty({
-    enum: Provider,
-    example: Provider.LOCAL,
-  })
   @IsOptional()
   provider?: Provider;
 
-  @ApiProperty({
-    enum: Role,
-    example: Role.USER,
-  })
   @IsOptional()
   role?: Role;
+
+  @ApiProperty({ type: CreateTermOfUseDto })
+  termOfUse?: TermOfUse;
 }

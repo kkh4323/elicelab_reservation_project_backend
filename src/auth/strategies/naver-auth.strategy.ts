@@ -25,7 +25,7 @@ export class NaverAuthStrategy extends PassportStrategy(Strategy) {
   ) {
     const { nickname, email, provider, mobile, profileImage } = profile;
     try {
-      const user = await this.userService.getUserByEmail(email);
+      const user = await this.userService.getUserBy('email', email);
       if (user.provider !== provider) {
         const err = new HttpException(
           `You are already subscribed to ${user.provider}.`,

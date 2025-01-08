@@ -54,7 +54,11 @@ export class AuthService {
 
   // 로그인 로직
   async loginUser(loginUserDto: LoginUserDto): Promise<User> {
-    const user: User = await this.userService.getUserByEmail(
+    // const user: User = await this.userService.getUserByEmail(
+    //   loginUserDto.email,
+    // );
+    const user: User = await this.userService.getUserBy(
+      'email',
       loginUserDto.email,
     );
     if (!user) {
@@ -134,7 +138,7 @@ export class AuthService {
   // 비밀번호 찾는 이메일 보내기
   async findPasswordSendEmail(email: string): Promise<string> {
     const payload = { email };
-    const user: User = await this.userService.getUserByEmail(email);
+    const user: User = await this.userService.getUserBy('email', email);
 
     if (user.provider !== Provider.LOCAL) {
       throw new HttpException(
@@ -160,7 +164,10 @@ export class AuthService {
   }
 
   async changePassword(user: User, newPassword: string) {
-    const existedUser = await this.userService.getUserByEmail(user.email);
+    const existedUser: User = await this.userService.getUserBy(
+      'email',
+      user.email,
+    );
     if (existedUser.provider !== Provider.LOCAL) {
       throw new HttpException(
         'you have logged in by social ID',
@@ -176,9 +183,18 @@ export class AuthService {
       secret: this.configService.get('FIND_PASSWORD_TOKEN_SECURITY'),
     });
     console.log(email);
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.getUserBy('email', email);
 
     return this.changePassword(user, newPassword);
+  }
+
+  async findEmail(username: string, phone: string): Promise<string> {
+    const user: User = await this.userService.getUserByUsernamePhone(
+      username,
+      phone,
+    );
+    if (user) return user.email;
+    throw new HttpException('cannot find email', HttpStatus.BAD_REQUEST);
   }
 
   generateOTP() {

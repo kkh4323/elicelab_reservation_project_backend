@@ -32,7 +32,10 @@ export class TermOfUseService {
     user: User,
     updateTermOfUseDto: CreateTermOfUseDto,
   ): Promise<UpdateResult> {
-    const existedUser: User = await this.userService.getUserByEmail(user.email);
+    const existedUser: User = await this.userService.getUserBy(
+      'email',
+      user.email,
+    );
     return await this.termOfUseRepository.update(
       { id: existedUser.termOfUse.id },
       updateTermOfUseDto,

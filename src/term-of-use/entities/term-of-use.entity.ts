@@ -8,7 +8,7 @@ export class TermOfUse extends BaseEntity {
   public user?: User;
 
   @Column({ default: false })
-  public termOfUse: boolean;
+  public termOfUseElice: boolean;
 
   @Column({ default: false })
   public overTwenty: boolean;

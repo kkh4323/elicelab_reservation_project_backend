@@ -26,6 +26,7 @@ import { SendEmailDto } from '@user/dto/send-email.dto';
 import { KakaoAuthGuard } from '@auth/guardies/kakao-auth.guard';
 import { ChangePasswordDto } from '@user/dto/change-password.dto';
 import { EmailUserDto } from '@user/dto/email-user.dto';
+import { FindEmailDto } from '@user/dto/find-email.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -187,18 +188,10 @@ export class AuthController {
     return await this.authService.changePasswordBeforeLogin(newPassword, token);
   }
 
-  // 가입 인증 메일 전송
-  @Post('/email/send')
-  @ApiBody({ type: EmailUserDto })
-  async sendEmail(@Body() emailUserDto: EmailUserDto): Promise<void> {
-    return await this.authService.sendEmail(emailUserDto);
-  }
-
-  // 가입 인증 메일 인증코드 비교
-  @Post('/email/verify')
-  async verifyEmailWithCode(
-    @Body() verifyEmailDto: VerifyEmailDto,
-  ): Promise<boolean> {
-    return await this.authService.verifyEmail(verifyEmailDto);
+  @HttpCode(HttpStatus.OK)
+  @Post('/find/email')
+  async findEmail(@Body() findEmailDto: FindEmailDto): Promise<string> {
+    const { username, phone } = findEmailDto;
+    return await this.authService.findEmail(username, phone);
   }
 }

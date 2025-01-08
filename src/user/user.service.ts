@@ -76,23 +76,45 @@ export class UserService {
     return newUser;
   }
 
-  // 이메일로 검색하는 로직
-  async getUserByEmail(email: string): Promise<User> {
-    const user: User = await this.userRepository.findOneBy({ email });
+  // // 이메일로 검색하는 로직
+  // async getUserByEmail(email: string): Promise<User> {
+  //   const user: User = await this.userRepository.findOneBy({ email });
+  //   if (user) return user;
+  //   throw new HttpException('user is not exists', HttpStatus.NOT_FOUND);
+  // }
+  //
+  // // 아이디로 검색하는 로직
+  // async getUserById(id: string): Promise<User> {
+  //   const user: User = await this.userRepository.findOneBy({ id });
+  //   if (user) return user;
+  //   throw new HttpException('user is not exists', HttpStatus.NOT_FOUND);
+  // }
+
+  async getUserBy(
+    key: 'id' | 'email' | 'username',
+    value: string,
+  ): Promise<User> {
+    const user: User = await this.userRepository.findOneBy({ [key]: value });
     if (user) return user;
-    throw new HttpException('user is not exists', HttpStatus.NOT_FOUND);
+    throw new HttpException(
+      `User with this ${key} does not exists`,
+      HttpStatus.NOT_FOUND,
+    );
   }
 
-  // 아이디로 검색하는 로직
-  async getUserById(id: string): Promise<User> {
-    const user: User = await this.userRepository.findOneBy({ id });
-    if (user) return user;
-    throw new HttpException('user is not exists', HttpStatus.NOT_FOUND);
+  // 이름, 전화번호로 유저 불러와 이메일 찾는 로직
+  async getUserByUsernamePhone(username: string, phone: string): Promise<User> {
+    const user: User = await this.getUserBy('username', username);
+    if (user.phone === phone) return user;
+    throw new HttpException(
+      `User with this username and phone does not matched.`,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   // 패스워드 저장
   async saveNewPassword(user: User, newPassword: string) {
-    const existedUser = await this.getUserByEmail(user.email);
+    const existedUser = await this.getUserBy('email', user.email);
     const saltValue = await bcrypt.genSalt(10);
     existedUser.password = await bcrypt.hash(newPassword, saltValue);
     return await this.userRepository.save(existedUser);
@@ -100,7 +122,7 @@ export class UserService {
 
   // RefreshToken 매칭 하는 로직
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
-    const user = await this.getUserById(userId);
+    const user = await this.getUserBy('id', userId);
     const getUserIdFromRedis: string = await this.cacheManager.get(userId);
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
@@ -131,7 +153,7 @@ export class UserService {
 
   // 아이디로 유저 삭제하는 로직
   async deleteUserById(user: User) {
-    const existedUser: User = await this.getUserById(user.id);
+    const existedUser: User = await this.getUserBy('id', user.id);
     if (existedUser) {
       await this.userRepository.delete({ id: existedUser.id });
       return `${existedUser.id} is deleted successfully`;

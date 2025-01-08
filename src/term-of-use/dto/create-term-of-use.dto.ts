@@ -4,7 +4,7 @@ import { IsBoolean } from 'class-validator';
 export class CreateTermOfUseDto {
   @ApiProperty({ example: true })
   @IsBoolean()
-  termOfUse: boolean = true;
+  termOfUseElice: boolean = true;
 
   @ApiProperty({ example: true })
   @IsBoolean()
