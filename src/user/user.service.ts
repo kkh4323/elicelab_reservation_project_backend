@@ -152,8 +152,9 @@ export class UserService {
   }
 
   // 아이디로 유저 삭제하는 로직
-  async deleteUserById(user: User) {
-    const existedUser: User = await this.getUserBy('id', user.id);
+  async deleteUserById(userId: string): Promise<string> {
+    const existedUser: User = await this.getUserBy('id', userId);
+
     if (existedUser) {
       await this.userRepository.delete({ id: existedUser.id });
       return `${existedUser.id} is deleted successfully`;

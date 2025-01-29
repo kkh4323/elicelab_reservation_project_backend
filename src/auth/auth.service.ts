@@ -87,7 +87,9 @@ export class AuthService {
       secret: this.configService.get('ACCESS_TOKEN_SECURITY'),
       expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'),
     });
-    const accessCookie = `Authentication=${accessToken}; Path=/; Max-Age=${this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME')}`;
+    const accessCookie = `Authentication=${accessToken}; Path=/; Max-Age=${this.configService.get(
+      'ACCESS_TOKEN_EXPIRATION_TIME',
+    )}`;
     return { accessToken, accessCookie };
   }
 
@@ -101,7 +103,9 @@ export class AuthService {
       secret: this.configService.get('REFRESH_TOKEN_SECURITY'),
       expiresIn: this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'),
     });
-    const refreshCookie = `Refresh=${refreshToken}; Path=/; Max-Age=${this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME')}`;
+    const refreshCookie = `Refresh=${refreshToken}; Path=/; Max-Age=${this.configService.get(
+      'REFRESH_TOKEN_EXPIRATION_TIME',
+    )}`;
     return { refreshToken, refreshCookie };
   }
 
@@ -115,15 +119,20 @@ export class AuthService {
     await this.cacheManager.set(userId, currentHashedRefreshToken);
   }
 
-  async sendEmail(sendEmailDto: SendEmailDto): Promise<void> {
+  async sendEmail(sendEmailDto: SendEmailDto): Promise<boolean> {
     const generatedNumber: string = this.generateOTP();
 
     await this.cacheManager.set(sendEmailDto.email, generatedNumber);
-    await this.emailService.sendMail({
+    const result = await this.emailService.sendMail({
       to: sendEmailDto.email,
       subject: '[엘리스Lab] 가입 인증 메일입니다.',
       text: `엘리스랩 가입 인증 메일입니다. 인증번호는 ${generatedNumber}입니다.`,
     });
+    if (result.accepted[0]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<boolean> {
@@ -152,7 +161,9 @@ export class AuthService {
       expiresIn: this.configService.get('FIND_PASSWORD_TOKEN_EXPIRATION_TIME'),
     });
 
-    const url: string = `${this.configService.get('EMAIL_BASE_URL')}/change/password?token=${token}`;
+    const url: string = `${this.configService.get(
+      'EMAIL_BASE_URL',
+    )}/change/password?token=${token}`;
 
     await this.emailService.sendMail({
       to: email,

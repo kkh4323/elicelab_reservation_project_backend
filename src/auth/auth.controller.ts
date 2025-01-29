@@ -76,12 +76,14 @@ export class AuthController {
   }
 
   // [관리자] 이메일 전송
+  @HttpCode(HttpStatus.OK)
   @Post('/email/send')
-  async sendEmail(@Body() sendEmailDto: SendEmailDto): Promise<void> {
+  async sendEmail(@Body() sendEmailDto: SendEmailDto): Promise<boolean> {
     return await this.authService.sendEmail(sendEmailDto);
   }
 
   // 인증코드 비교
+  @HttpCode(HttpStatus.OK)
   @Post('/email/verify')
   async verifyEmailWithCode(
     @Body() verifyEmailDto: VerifyEmailDto,

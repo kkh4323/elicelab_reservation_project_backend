@@ -12,7 +12,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '@user/user.service';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RoleGuard } from '@auth/guardies/role.guard';
 import { Role } from '@user/entities/role.enum';
 import { User } from '@user/entities/user.entity';
@@ -84,7 +90,22 @@ export class UserController {
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async deleteUserById(@Req() req: RequestWithUserInterface) {
-    return await this.userService.deleteUserById(req.user);
+  @ApiOperation({
+    summary: 'user delete by user',
+    description: 'user delete',
+  })
+  async deleteUserById(@Req() req: RequestWithUserInterface): Promise<string> {
+    const userId: string = req.user.id;
+    return await this.userService.deleteUserById(userId);
+  }
+
+  @Delete('/:id')
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @ApiOperation({
+    summary: 'user delete by admin',
+    description: 'admin user management(delete)',
+  })
+  async deleteUserByIdAdmin(@Param('id') id: string): Promise<string> {
+    return await this.userService.deleteUserById(id);
   }
 }

@@ -20,7 +20,7 @@ import { Space } from '@space/entities/space.entity';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 import { BufferedFile } from '@minio-client/file.model';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { MinioClientService } from '@minio-client/minio-client.service';
 import { SpacePageOptionsDto } from '@root/common/dto/space-page-options.dto';
 
@@ -33,8 +33,8 @@ export class SpaceController {
   ) {}
 
   @Post('/create')
-  @UseGuards(RoleGuard(Role.ADMIN))
-  @UseInterceptors(FilesInterceptor('spaceImgs')) // Allow up to 5 files
+  // @UseGuards(RoleGuard(Role.ADMIN))
+  @UseInterceptors(FilesInterceptor('spaceImgs', 5)) // Allow up to 5 files
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateSpaceDto })
   async createSpace(

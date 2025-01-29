@@ -94,7 +94,9 @@ export class MinioClientService {
             }
           },
         );
-        const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+        const fileUrl = `http://localhost:${this.configService.get(
+          'MINIO_PORT',
+        )}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
         console.log('-=============', fileUrl);
         uploadedUrls.push(fileUrl);
       }
@@ -158,7 +160,9 @@ export class MinioClientService {
           }
         },
       );
-      const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+      const fileUrl = `http://localhost:${this.configService.get(
+        'MINIO_PORT',
+      )}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
       uploadedUrls.push(fileUrl);
     }
     return uploadedUrls;
@@ -208,7 +212,9 @@ export class MinioClientService {
         }
       },
     );
-    const fileUrl = `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+    const fileUrl = `http://localhost:${this.configService.get(
+      'MINIO_PORT',
+    )}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
 
     return fileUrl;
   }
@@ -273,7 +279,11 @@ export class MinioClientService {
       },
     );
 
-    return `http://${this.configService.get('MINIO_ENDPOINT')}:${this.configService.get('MINIO_PORT')}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
+    return `http://${this.configService.get(
+      'MINIO_ENDPOINT',
+    )}:${this.configService.get('MINIO_PORT')}/${this.configService.get(
+      'MINIO_DEFAULT_BUCKETS',
+    )}/${filePath}`;
   }
 
   deleteFolderContents = async (bucketName, folderPath) => {

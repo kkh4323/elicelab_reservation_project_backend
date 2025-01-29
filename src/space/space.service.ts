@@ -9,6 +9,7 @@ import { BufferedFile } from '@minio-client/file.model';
 import { SpacePageOptionsDto } from '@root/common/dto/space-page-options.dto';
 import { PageMetaDto } from '@root/common/dto/page-meta.dto';
 import { PageDto } from '@root/common/dto/page.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SpaceService {
@@ -16,6 +17,7 @@ export class SpaceService {
     @InjectRepository(Space)
     private spaceRepository: Repository<Space>,
     private readonly minioClientService: MinioClientService,
+    private readonly configService: ConfigService,
   ) {}
 
   // [관리자] 공간 생성하는 로직
@@ -90,6 +92,18 @@ export class SpaceService {
 
   // [관리자] 공간 삭제하는 로직
   async deleteSpaceById(id: string): Promise<string> {
+    const space = await this.spaceRepository.findOneBy({ id });
+    if (!space) {
+      throw new HttpException(
+        `Space(id: ${id}) is not exist`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const bucketName = this.configService.get('MINIO_BUCKET');
+    const folderPath = `space/${id}`;
+    await this.minioClientService.deleteFolderContents(bucketName, folderPath);
+
     const result: DeleteResult = await this.spaceRepository.delete({ id });
     if (result.affected) return `Space(id: ${id}) is deleted successfully`;
     throw new HttpException(
