@@ -12,13 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '@user/user.service';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiProperty,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '@auth/guardies/role.guard';
 import { Role } from '@user/entities/role.enum';
 import { User } from '@user/entities/user.entity';
@@ -28,6 +22,7 @@ import { CreateUserDto } from '@user/dto/create-user.dto';
 import { RequestWithUserInterface } from '@auth/interfaces/requestWithUser.interface';
 import { BufferedFile } from '@minio-client/file.model';
 import { UserPageOptionsDto } from '@root/common/dto/user-page-options.dto';
+import { PageDto } from '@root/common/dto/page.dto';
 
 @Controller('user')
 @ApiTags('user')
@@ -37,7 +32,10 @@ export class UserController {
   // [관리자] 전체 유저 정보 가져오는 api
   @Get()
   @UseGuards(RoleGuard(Role.ADMIN))
-  async getUserDatas(@Query() userPageOptionsDto: UserPageOptionsDto) {
+  async getUserList(
+    @Query() userPageOptionsDto: UserPageOptionsDto,
+  ): Promise<PageDto<User>> {
+    console.log('userPageOptionsDto: ', userPageOptionsDto);
     return await this.userService.getUserDatas(userPageOptionsDto);
   }
 

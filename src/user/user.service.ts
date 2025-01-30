@@ -48,9 +48,14 @@ export class UserService {
     //     roles: userPageOptionsDto.roles,
     //   });
     // }
-    if (userPageOptionsDto.roles) {
-      queryBuilder.andWhere(`array_to_string(user.roles, ',') ILIKE :roles`, {
-        roles: `%${userPageOptionsDto.roles}%`,
+    // if (userPageOptionsDto.roles) {
+    //   queryBuilder.andWhere(`array_to_string(user.roles, ',') ILIKE :roles`, {
+    //     roles: `[${userPageOptionsDto.roles}]`,
+    //   });
+    // }
+    if (userPageOptionsDto.roles && userPageOptionsDto.roles.length > 0) {
+      queryBuilder.andWhere('user.roles && :roles', {
+        roles: [userPageOptionsDto.roles], // 반드시 배열로 변환
       });
     }
     queryBuilder

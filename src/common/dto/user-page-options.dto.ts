@@ -9,7 +9,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { Role } from '@user/entities/role.enum';
 
 export class UserPageOptionsDto {
   @ApiPropertyOptional({ enum: Order, default: Order.ASC })
@@ -57,11 +58,18 @@ export class UserPageOptionsDto {
   @IsOptional()
   readonly phone?: string = '';
 
-  @ApiPropertyOptional({ default: [] })
+  @ApiPropertyOptional({
+    enum: Role,
+    isArray: true,
+    default: [],
+  })
   @IsArray()
   @Type(() => String)
   @IsOptional()
-  readonly roles?: string[] = [];
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
+  readonly roles?: Role[] = [];
 
   get skip(): number {
     return (this.page - 1) * this.take;
