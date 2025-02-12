@@ -134,16 +134,20 @@ export class UserService {
     image?: BufferedFile,
     updateUserDto?: CreateUserDto,
   ) {
-    const profileImg = await this.minioClientService.uploadProfileImg(
-      user,
-      image,
-      'profile',
-    );
-    console.log(profileImg);
-    return await this.userRepository.update(user.id, {
-      ...updateUserDto,
-      profileImg,
-    });
+    try {
+      const profileImg = await this.minioClientService.uploadProfileImg(
+        user,
+        image,
+        'profile',
+      );
+      console.log(profileImg);
+      return await this.userRepository.update(user.id, {
+        ...updateUserDto,
+        profileImg,
+      });
+    } catch (err) {
+      console.log('error', err);
+    }
   }
 
   // 아이디로 유저 삭제하는 로직

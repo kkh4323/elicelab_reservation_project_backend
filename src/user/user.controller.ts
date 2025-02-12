@@ -86,6 +86,55 @@ export class UserController {
     );
   }
 
+  @Put('/:id')
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @ApiOperation({
+    summary: 'update user by admin',
+    description: 'admin user management(update)',
+  })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateUserDto })
+  @ApiBody({
+    description: 'A single image file with additional member data',
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profile image file',
+        },
+        username: {
+          type: 'string',
+          description: 'username',
+        },
+        phone: {
+          type: 'string',
+          description: 'phone',
+        },
+      },
+    },
+  })
+  async updateUserByIdAdmin(
+    @Param('id') id: string,
+    @UploadedFile() image?: BufferedFile,
+    @Body() updateUserDto?: CreateUserDto,
+  ) {
+    console.log(image);
+    console.log(updateUserDto);
+    try {
+      const existedUser = await this.userService.getUserBy('id', id);
+      return await this.userService.updateUserById(
+        existedUser,
+        image,
+        updateUserDto,
+      );
+    } catch (err) {
+      console.log('error: ', err);
+    }
+  }
+
   @Delete()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({

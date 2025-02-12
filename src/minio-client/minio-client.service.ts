@@ -279,11 +279,9 @@ export class MinioClientService {
       },
     );
 
-    return `http://${this.configService.get(
-      'MINIO_ENDPOINT',
-    )}:${this.configService.get('MINIO_PORT')}/${this.configService.get(
-      'MINIO_DEFAULT_BUCKETS',
-    )}/${filePath}`;
+    return `http://localhost:${this.configService.get(
+      'MINIO_PORT',
+    )}/${this.configService.get('MINIO_DEFAULT_BUCKETS')}/${filePath}`;
   }
 
   deleteFolderContents = async (bucketName, folderPath) => {
