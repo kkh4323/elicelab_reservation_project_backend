@@ -26,26 +26,30 @@ export class CreateSpaceDto {
   description: string;
 
   @ApiProperty({
-    example: Location.SEOUL,
+    example: [Location.SEOUL],
     enum: Location,
+    isArray: true,
   })
-  @IsEnum(Location, { message: '유효한 위치를 선택하세요.' })
+  @IsArray({ message: '위치는 배열이어야 합니다.' })
+  @IsEnum(Location, { each: true, message: '유효한 위치를 선택하세요.' })
   @IsNotEmpty({ message: '위치는 필수 입력사항입니다.' })
-  location: Location;
+  location: Location[];
 
   @ApiProperty({
-    example: Zone.MEETING,
+    example: [Zone.MEETING],
     enum: Zone,
+    isArray: true,
   })
-  @IsEnum(Zone, { message: '유효한 구역을 선택하세요.' })
+  @IsArray({ message: '구역은 배열이어야 합니다.' })
+  @IsEnum(Zone, { each: true, message: '유효한 구역을 선택하세요.' })
   @IsNotEmpty({ message: '구역은 필수 입력사항입니다.' })
-  zone: Zone;
+  zone: Zone[];
 
   @ApiProperty({
     required: false,
   })
   @IsOptional()
-  // @IsNumber({}, { message: '최대 인원 수는 숫자여야 합니다.' })
+  @IsNumber({}, { message: '최대 인원 수는 숫자여야 합니다.' })
   maxPeople?: number;
 
   @ApiProperty({
@@ -54,6 +58,6 @@ export class CreateSpaceDto {
     items: { type: 'string', format: 'binary' },
   })
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: '이미지는 배열이어야 합니다.' })
   spaceImgs?: any[];
 }

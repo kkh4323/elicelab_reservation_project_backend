@@ -5,7 +5,7 @@ import { Location } from '@space/entities/location.enum';
 
 @Entity()
 export class Space extends BaseEntity {
-  @Column({ unique: true })
+  @Column()
   public name: string;
 
   @Column()
@@ -14,16 +14,16 @@ export class Space extends BaseEntity {
   @Column({
     type: 'enum',
     enum: Location,
-    default: Location.SEOUL,
+    default: [Location.SEOUL],
   })
-  public location: Location;
+  public location: Location[];
 
   @Column({
     type: 'enum',
     enum: Zone,
-    default: Zone.MEETING,
+    default: [Zone.MEETING],
   })
-  public zone: Zone;
+  public zone: Zone[];
 
   @Column({ nullable: true })
   public maxPeople?: number;
