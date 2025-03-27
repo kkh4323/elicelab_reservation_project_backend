@@ -21,6 +21,18 @@ export class UserService {
     private readonly minioClientService: MinioClientService,
   ) {}
 
+  async getUserList(): Promise<User[]> {
+    const redisData = await this.cacheManager.get('users');
+    if (redisData) {
+      console.log('redisData');
+      return await this.cacheManager.get('users');
+    } else {
+      console.log('databaseData');
+      const userList = await this.userRepository.find();
+      const savedUserList = await this.cacheManager.set('users', userList);
+      return userList;
+    }
+  }
   // [관리자] 전체 유저 가져오는 로직
   async getUserDatas(
     userPageOptionsDto: UserPageOptionsDto,
@@ -68,6 +80,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const newUser: User = await this.userRepository.create(createUserDto);
     await this.userRepository.save(newUser);
+    await this.cacheManager.del('users');
     return newUser;
   }
 
@@ -91,6 +104,7 @@ export class UserService {
   ): Promise<User> {
     const user: User = await this.userRepository.findOneBy({ [key]: value });
     if (user) return user;
+
     throw new HttpException(
       `User with this ${key} does not exists`,
       HttpStatus.NOT_FOUND,

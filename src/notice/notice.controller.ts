@@ -24,7 +24,7 @@ export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
   @Post('/create')
-  @UseGuards(RoleGuard(Role.ADMIN))
+  // @UseGuards(RoleGuard(Role.ADMIN))
   async createNotice(
     @Req() req: RequestWithUserInterface,
     @Body() createNoticeDto: CreateNoticeDto,
@@ -43,7 +43,7 @@ export class NoticeController {
   }
 
   @Put('/:id')
-  @UseGuards(RoleGuard(Role.ADMIN))
+  // @UseGuards(RoleGuard(Role.ADMIN))
   async updateNoticeById(
     @Param('id') id: string,
     @Body() updateNoticeDto: CreateNoticeDto,
@@ -52,7 +52,7 @@ export class NoticeController {
   }
 
   @Delete('/:id')
-  @UseGuards(RoleGuard(Role.ADMIN))
+  // @UseGuards(RoleGuard(Role.ADMIN))
   async deleteNoticeById(@Param('id') id: string): Promise<string> {
     return await this.noticeService.deleteNoticeById(id);
   }

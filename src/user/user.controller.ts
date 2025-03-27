@@ -39,6 +39,12 @@ export class UserController {
     return await this.userService.getUserDatas(userPageOptionsDto);
   }
 
+  @Get('/all')
+  @UseGuards(RoleGuard(Role.ADMIN))
+  async getAllUsers(): Promise<User[]> {
+    return await this.userService.getUserList();
+  }
+
   // [관리자] 상세 유저 정보 가져오는 api
   @Get('/:id')
   @UseGuards(RoleGuard(Role.ADMIN))

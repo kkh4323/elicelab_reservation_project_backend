@@ -18,7 +18,7 @@ async function bootstrap() {
 
   // origin의 value값만 접근 가능
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true,
   });
   app.useGlobalPipes(
