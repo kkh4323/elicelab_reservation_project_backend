@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
+  ValidateNested,
 } from 'class-validator';
 import { Provider } from '@user/entities/provider.enum';
 import { Role } from '@user/entities/role.enum';
 import { CreateTermOfUseDto } from '@term-of-use/dto/create-term-of-use.dto';
-import { TermOfUse } from '@term-of-use/entities/term-of-use.entity';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'kkh4323@naver.com', uniqueItems: true })
@@ -37,11 +39,15 @@ export class CreateUserDto {
   profileImg?: string;
 
   @IsOptional()
+  @IsEnum(Provider, { message: '유효한 provider 값을 입력해주세요.' })
   provider?: Provider;
 
   @IsOptional()
+  @IsEnum(Role, { message: '유효한 role 값을 입력해주세요.' })
   role?: Role;
 
+  @ValidateNested()
+  @Type(() => CreateTermOfUseDto)
   @ApiProperty({ type: CreateTermOfUseDto })
-  termOfUse?: TermOfUse;
+  termOfUse?: CreateTermOfUseDto;
 }

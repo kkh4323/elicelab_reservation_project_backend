@@ -25,7 +25,7 @@ import { VerifyEmailDto } from '@user/dto/verify-email.dto';
 import { SendEmailDto } from '@user/dto/send-email.dto';
 import { KakaoAuthGuard } from '@auth/guardies/kakao-auth.guard';
 import { ChangePasswordDto } from '@user/dto/change-password.dto';
-import { EmailUserDto } from '@user/dto/email-user.dto';
+import { plainToInstance } from 'class-transformer';
 import { FindEmailDto } from '@user/dto/find-email.dto';
 
 @Controller('auth')
@@ -40,9 +40,10 @@ export class AuthController {
   }
 
   // 로그인
-  @Post('/login')
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginUserDto })
+  @Post('/login')
   async loginUser(@Req() req: RequestWithUserInterface, @Res() res: Response) {
     const user: User = await req.user;
     const { accessToken, accessCookie } =
@@ -51,8 +52,10 @@ export class AuthController {
       await this.authService.generateRefreshToken(user.id);
     await this.authService.setCurrentRefreshTokenToRedis(refreshToken, user.id);
 
+    const safeUser = plainToInstance(User, user);
+
     res.setHeader('Set-Cookie', [accessCookie, refreshCookie]);
-    res.send({ user });
+    res.send({ safeUser });
   }
 
   // refreshToken 생성

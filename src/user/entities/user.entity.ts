@@ -16,25 +16,44 @@ import { Reservation } from '@reservation/entities/reservation.entity';
 import { Notice } from '@notice/entities/notice.entity';
 import { Comment } from '@comment/entities/comment.entity';
 import { TermOfUse } from '@root/term-of-use/entities/term-of-use.entity';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsString,
+} from 'class-validator';
 
 @Entity()
 export class User extends BaseEntity {
+  @IsEmail()
+  @IsNotEmpty()
   @Column({ unique: true })
   public email: string;
 
+  @IsOptional()
+  @IsString()
   @Column({ nullable: true })
   @Exclude() // 값 return할 때 password 숨겨줌
   public password?: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Column()
   public username: string;
 
+  @IsOptional()
+  @IsString()
   @Column({ nullable: true })
   public phone?: string;
 
+  @IsOptional()
+  @IsString()
   @Column({ nullable: true })
   public profileImg?: string;
 
+  @IsEnum(Provider)
   @Column({
     type: 'enum',
     enum: Provider,
@@ -42,6 +61,8 @@ export class User extends BaseEntity {
   })
   provider: Provider;
 
+  @IsArray()
+  @IsEnum(Role, { each: true })
   @Column({
     type: 'enum',
     enum: Role,
