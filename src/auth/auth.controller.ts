@@ -58,6 +58,27 @@ export class AuthController {
     res.send({ safeUser });
   }
 
+  // 로그아웃
+  @Post('/logout')
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @Req() req: RequestWithUserInterface,
+    @Res() res: Response,
+  ): Promise<void> {
+    const userId = req.user.id;
+
+    await this.authService.removeRefreshToken(userId);
+
+    res.setHeader('Set-Cookie', [
+      'Authentication=; HttpOnly; Path=/; Max-Age=0',
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
+    ]);
+
+    res.send({ message: 'Logged out successfully' });
+  }
+
   // refreshToken 생성
   @UseGuards(RefreshTokenGuard)
   @Get('/refresh')

@@ -119,6 +119,10 @@ export class AuthService {
     await this.cacheManager.set(userId, currentHashedRefreshToken);
   }
 
+  async removeRefreshToken(userId: string): Promise<void> {
+    await this.cacheManager.del(userId);
+  }
+
   async sendEmail(sendEmailDto: SendEmailDto): Promise<boolean> {
     const generatedNumber: string = this.generateOTP();
 
