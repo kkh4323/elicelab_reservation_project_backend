@@ -1,10 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Space } from '@space/entities/space.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DataSource, DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateSpaceDto } from '@space/dto/create-space.dto';
 import { MinioClientService } from '@minio-client/minio-client.service';
-import { User } from '@user/entities/user.entity';
 import { BufferedFile } from '@minio-client/file.model';
 import { SpacePageOptionsDto } from '@root/common/dto/space-page-options.dto';
 import { PageMetaDto } from '@root/common/dto/page-meta.dto';
@@ -18,20 +17,34 @@ export class SpaceService {
     private spaceRepository: Repository<Space>,
     private readonly minioClientService: MinioClientService,
     private readonly configService: ConfigService,
+    private readonly dataSource: DataSource,
   ) {}
 
   // [관리자] 공간 생성하는 로직
-  async createSpace(createSpaceDto?: CreateSpaceDto, images?: BufferedFile[]) {
-    const newSpace: Space = await this.spaceRepository.create(createSpaceDto);
-    await this.spaceRepository.save(newSpace);
-    const spaceImgs = await this.minioClientService.uploadSpaceImgs(
-      newSpace.id,
-      images,
-      'space',
+  async createSpace(
+    createSpaceDto?: CreateSpaceDto,
+    images?: BufferedFile[],
+  ): Promise<Space> {
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        const newSpace: Space = this.spaceRepository.create(createSpaceDto);
+        const savedSpace = await transactionalEntityManager.save(newSpace);
+
+        let spaceImgs: string[] = [];
+        if (images && images.length > 0) {
+          spaceImgs = await this.minioClientService.uploadSpaceImgs(
+            savedSpace.id,
+            images,
+            'space',
+          );
+        }
+
+        savedSpace.spaceImgs = spaceImgs;
+        const updatedSpace = await transactionalEntityManager.save(savedSpace);
+
+        return updatedSpace;
+      },
     );
-    newSpace.spaceImgs = spaceImgs;
-    await this.spaceRepository.save(newSpace);
-    return newSpace;
   }
 
   // 공간 전체 가져오는 로직
